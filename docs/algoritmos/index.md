@@ -2,7 +2,7 @@
 
 La fase técnica muestra qué hace cada herramienta. El razonamiento que hay debajo —cómo
 decide— es lo que interesa a quien quiera reproducirlo, calibrarlo o llevarlo más lejos.
-Conviene separar dos capas: **[Chrono Suite](https://github.com/Kitherow/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md)** coordina la pasada dentro de Aegisub, lee las
+Conviene separar dos capas: **[Chrono Suite](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md)** coordina la pasada dentro de Aegisub, lee las
 líneas seleccionadas, aplica el post-timing y marca los casos dudosos; el **módulo de
 cronometraje** aporta la lógica multiseñal de Busy. Lazy y Legacy viven como rutas directas
 de Chrono: Lazy usa la onda comprimida, y Legacy conserva la familia histórica de
@@ -296,7 +296,7 @@ El modelo deja varios puntos abiertos para quien quiera empujar la automatizaci�
   de continuidad, acercando la decisión automática a la jerarquía completa de Fundamentos.
 
 La familia Legacy puede consultarse en
-[Lazytimer Pocket-sized](https://github.com/Kitherow/lazytimer-pocket-sized). La integración actual separa esa
+[Lazytimer Pocket-sized](https://github.com/Kiterowx/lazytimer-pocket-sized). La integración actual separa esa
 ruta de compatibilidad de Lazy y del módulo Busy. Cualquier extensión mantiene el mismo
 techo: el modelo amplía la evidencia y mejora la propuesta, y la decisión final —que el
 borde respete la voz, la lectura, la escena y la continuidad— sigue dependiendo del

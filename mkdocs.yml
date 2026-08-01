@@ -3,7 +3,7 @@ site_description: >-
   Método para decidir, con criterio justificable, en qué instante aparece y
   desaparece cada línea de subtítulo: fundamentos del timing y fase técnica.
 site_author: Kiterow
-site_url: https://kitherow.github.io/Arquitectura-del-Timing/
+site_url: https://kiterowx.github.io/Arquitectura-del-Timing/
 
 theme:
   name: material

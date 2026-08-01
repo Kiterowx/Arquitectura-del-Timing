@@ -16,12 +16,12 @@ keyframes de escena, silencios a varios umbrales, regiones de voz, ataques
 espectrales, energía RMS y una onda comprimida. Son procesos externos al editor;
 se ejecutan una vez por episodio y dejan sus salidas junto al video.
 
-**[Chrono Suite](https://github.com/Kitherow/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md).** Una suite de macros para Aegisub que consume esas señales
+**[Chrono Suite](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md).** Una suite de macros para Aegisub que consume esas señales
 dentro del editor. Auto Timing coordina las rutas Lazy, Busy y Legacy, propone
 bordes a partir de la voz detectada, los pule con márgenes, snaps y cadenas,
 audita riesgos y limpia el guion. La detección multiseñal de Busy se apoya en un
 módulo de cronometraje complementario. Legacy conserva la familia de
-[Lazytimer Pocket-sized](https://github.com/Kitherow/lazytimer-pocket-sized) como ruta por silencios.
+[Lazytimer Pocket-sized](https://github.com/Kiterowx/lazytimer-pocket-sized) como ruta por silencios.
 Todo ocurre sobre las líneas reales del subtítulo, con deshacer disponible en cada paso.
 
 **Material visual.** La onda comprimida sirve para estudiar un caso difícil fuera

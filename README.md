@@ -4,8 +4,8 @@ Sitio MkDocs Material sobre timing de subtítulos: criterio de decisión de bord
 fase técnica con la suite Chrono Suite y los generadores de señales.
 
 Este repositorio contiene solo la documentación. Las herramientas que describe
-—[Chrono Suite](https://github.com/Kitherow/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md),
-el módulo de cronometraje y [Chrono Generators](https://github.com/Kitherow/Chrono-Generators-Scripts)—
+—[Chrono Suite](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md),
+el módulo de cronometraje y [Chrono Generators](https://github.com/Kiterowx/Chrono-Generators-Scripts)—
 se distribuyen aparte e instalan en el editor y junto al material de trabajo.
 
 ## Estructura

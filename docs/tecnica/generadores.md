@@ -6,7 +6,7 @@ calculan una vez por episodio, quedan guardados junto al video y los lee despué
 motor de timing dentro del editor. Calcularlos por separado permite mirarlos,
 compararlos y rehacerlos sin tocar el subtítulo.
 
-La carpeta [Chrono Generators](https://github.com/Kitherow/Chrono-Generators-Scripts)
+La carpeta [Chrono Generators](https://github.com/Kiterowx/Chrono-Generators-Scripts)
 contiene seis archivos por lotes de producción: `Keyframes
 SCXvid.bat`, `Retimes Silencios.bat`, `Features Espectrales.bat`, `Envelope RMS.bat`,
 `Waveform JSON.bat` y `Procesar Todo.bat`. Son programas de Windows que se ejecutan
@@ -34,9 +34,9 @@ se procesa por su nombre real, sea cual sea. Sirve para un episodio suelto o par
 selección manual.
 
 La segunda es **ejecutarlo sin arrastrar nada**. El generador pregunta un número de
-inicio y uno de fin, y recorre la numeración del episodio —`1.mkv`, `02.mkv`,
-`03.mp4`— resolviendo sola la extensión y el cero a la izquierda. Sirve para procesar
-una serie entera de una vez.
+inicio y uno de fin, y recorre la numeración del episodio. `Keyframes SCXvid` busca
+el video —`1.mkv`, `02.mkv`—; todos los generadores de señales vocales buscan el WAV
+equivalente —`1.wav`, `02.wav`—. Sirve para procesar una serie entera de una vez.
 
 ## La preparación del audio
 
@@ -47,12 +47,11 @@ sube de 8 kHz, y una normalización dinámica que iguala tramos suaves y fuertes
 Todo.bat` reutiliza esa misma preparación para sus silencios, VAD, flux y mapa espectral.
 El archivo preparado es temporal y se borra al terminar.
 
-`Waveform JSON.bat` usa otra ruta: decodifica a mono de 48 kHz y escribe picos mínimo y
-máximo con resolución base de 1 ms. `Envelope RMS.bat` no usa esa normalización previa:
-lee la fuente elegida con FFprobe y escribe la energía RMS cuadro a cuadro. Los BAT aceptan
-arrastrar cualquier archivo compatible; para señales de habla, la entrada de trabajo es la
-pista vocal. En el modo por rango, `Envelope RMS.bat` y `Procesar Todo.bat` buscan primero
-archivos vocales con nombres reconocibles.
+`Waveform JSON.bat` usa otra ruta: decodifica el WAV vocal a mono de 48 kHz y escribe
+picos mínimo y máximo con resolución base de 1 ms. `Envelope RMS.bat` no usa esa
+normalización previa: lee el mismo WAV con FFprobe y escribe la energía RMS cuadro a
+cuadro. El video no entra en ninguna de estas mediciones. En el modo por rango,
+`Procesar Todo.bat` empareja cada video numerado con su WAV vocal.
 
 ## Keyframes SCXvid
 
@@ -100,12 +99,9 @@ vocal limpia, dibuja la silueta de cada frase: dónde sube el ataque, dónde se 
 cuerpo y dónde decae la cola. Es la señal que mejor separa una respiración final de una
 sílaba que todavía pertenece a la palabra, y la que más ayuda a decidir el lead-out.
 
-En modo de rango numérico busca primero una pista vocal junto al material —`01_vocals.wav`,
-`01_Vocals.wav`, `vocals_01.wav` y variantes— y también acepta un WAV con el número del
-episodio. Al arrastrar un archivo, calcula el envelope de ese archivo. En `Procesar Todo`,
-si la entrada es audio se usa la propia entrada; si la entrada es video, se prefiere la
-pista vocal cercana. La entrada principal queda como respaldo técnico, fuera del flujo
-normal de medición de habla. Sale como `_envelope.tsv`.
+En modo de rango numérico usa el WAV con el número del episodio —`01.wav`—. También
+reconoce nombres anteriores como `01_vocals.wav`, `01_Vocals.wav` o `vocals_01.wav`
+como respaldo. Al arrastrar un archivo, exige un WAV. Sale como `_envelope.tsv`.
 
 ## Waveform JSON
 
@@ -118,16 +114,12 @@ Sale como `.waveform.json`. Su estructura y su editor se describen en
 
 ## Procesar Todo
 
-**Procesar Todo** integra las mismas operaciones en un solo archivo por lotes. Sobre cada
-entrada extrae keyframes si es video, omite keyframes si es audio, mide silencios, VAD,
-flux y espectro desde el audio normalizado, escribe la onda comprimida y calcula el
-envelope. Los pasos de audio miden la entrada que recibe el BAT; por eso el flujo de
-señales de diálogo usa la pista vocal como entrada de trabajo. Cuando se procesa un video,
-la búsqueda de una vocal cercana sirve para el envelope y para mantener nombres coherentes,
-pero la preparación estricta separa el video para keyframes y la vocal para señales de
-audio.
+**Procesar Todo** integra las mismas operaciones en un solo archivo por lotes. Empareja
+`01.mkv` con `01.wav`: el video pasa únicamente a SCXvid para extraer keyframes y el WAV
+vocal pasa a silencios, VAD, flux, espectro, onda comprimida y envelope. Si falta cualquiera
+de los dos, el episodio no se procesa como flujo completo.
 
-Tras esa pasada sobre `01.mkv` con su `01_vocals.wav`, la carpeta contiene el material más
+Tras esa pasada sobre `01.mkv` con su `01.wav`, la carpeta contiene el material más
 estas señales:
 
 ```text
@@ -207,9 +199,9 @@ de fondo, los ataques dejan de dispararse con la percusión, y el envelope dibuj
 frase sin la energía ajena que la rodea.
 
 La separación se hace con [UVR](https://github.com/Anjok07/ultimatevocalremovergui),
-una aplicación de escritorio, y produce un `WAV` que
-conviene nombrar de forma reconocible —`01_vocals.wav` o `vocals_01.wav`— para que los
-generadores lo encuentren solos. Sobre esa pista limpia se calculan las señales de audio.
+una aplicación de escritorio, y produce un `WAV`. El contrato normal lo nombra con el
+número del episodio —`01.wav`— para emparejarlo con `01.mkv`. Sobre esa pista limpia se
+calculan todas las señales de audio.
 La mezcla completa queda como respaldo técnico fuera del flujo normal, con revisión
 posterior más estricta.
 

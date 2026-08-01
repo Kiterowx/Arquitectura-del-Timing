@@ -95,7 +95,7 @@ y para medir.
 
 ## El editor sobre la onda
 
-[SubWave](https://kitherow.github.io/SubWave-Editor/) es la
+[SubWave](https://kiterowx.github.io/SubWave-Editor/) es la
 vista de forma de onda convertida en editor,
 que carga la onda comprimida del episodio, dibuja encima las líneas del subtítulo y
 permite corregir cada borde arrastrándolo sobre la evidencia. Funciona en cualquier
@@ -124,7 +124,7 @@ arrastre fino deja el intervalo desnudo de voz donde el criterio de
 pegado que entró tarde, cortó una sílaba o arrastró ruido, línea por línea y con la
 evidencia delante. Los márgenes, el snap y la cadena se aplican después, en Aegisub,
 donde viven los keyframes y el post-timing de
-[Chrono Suite](https://github.com/Kitherow/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md).
+[Chrono Suite](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md).
 
 <figure class="tg-fig">
 <span class="tg-eyebrow">Borde elegido sobre la onda</span>

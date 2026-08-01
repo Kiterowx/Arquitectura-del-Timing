@@ -20,9 +20,9 @@ Notes](https://unanimated.github.io/timing-notes.htm)— desarrollan rough timin
 post-timing, line linking, keyframe snapping y revisión fina. La especificación [WebVTT del
 W3C](https://www.w3.org/TR/webvtt1/) define la idea de *cue* como texto asociado a un
 intervalo temporal, base del modelo de línea. La familia histórica usada por Legacy se
-puede consultar en [Lazytimer Pocket-sized](https://github.com/Kitherow/lazytimer-pocket-sized), y el
+puede consultar en [Lazytimer Pocket-sized](https://github.com/Kiterowx/lazytimer-pocket-sized), y el
 editor web de pegado sobre la onda comprimida, en
-[SubWave](https://github.com/Kitherow/SubWave-Editor).
+[SubWave](https://github.com/Kiterowx/SubWave-Editor).
 
 ## Normas de lectura
 

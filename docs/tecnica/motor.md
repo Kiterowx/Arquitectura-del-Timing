@@ -1,6 +1,6 @@
 # Motor de timing
 
-[Chrono Suite](https://github.com/Kitherow/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md)
+[Chrono Suite](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md)
 es la suite de macros que vive dentro de Aegisub, el editor de subtítulos.
 Una de sus macros, **Auto Timing**, es el motor de timing: lee las señales generadas y
 mueve los bordes de las líneas hasta la voz; el texto y la segmentación quedan fuera de su

@@ -18,8 +18,9 @@ cronometraje dentro de él, en este orden.
 ## Preparar el material
 
 Cada episodio vive en su propia carpeta de trabajo, con el video, el subtítulo base y la
-pista vocal separada. Más tarde se añaden las señales que se generen. Conviene una numeración limpia —`01.mkv`,
-`01.ass`— porque los generadores la reconocen y emparejan solos las salidas.
+pista vocal separada. Más tarde se añaden las señales que se generen. La numeración empareja
+los tres archivos —`01.mkv`, `01.wav`, `01.ass`— para que los generadores reconozcan solos
+las entradas y las salidas.
 
 ## Dividir las frases
 
@@ -31,12 +32,11 @@ reinsertándolas al terminar.
 
 ## Separar la voz y generar señales
 
-La voz se separa en una pista propia con UVR antes de generar señales. El video aporta los
-keyframes de escena; la pista vocal aporta las señales de diálogo: silencios a tres
-umbrales, detección de voz, flux, mapa espectral, energía RMS y onda comprimida. Los BAT
-procesan el archivo que se les entrega, así que la preparación correcta consiste en usar el
-video para escena y la vocal para audio. **Procesar Todo** agrupa esa generación cuando el
-material está preparado con nombres compatibles.
+La voz se separa en una pista propia con UVR antes de generar señales. El video aporta
+exclusivamente los keyframes de escena; `01.wav`, la pista vocal, aporta silencios a tres
+umbrales, detección de voz, flux, mapa espectral, energía RMS y onda comprimida. Cada BAT
+rechaza la clase de entrada que no le corresponde. **Procesar Todo** empareja `01.mkv` y
+`01.wav` y los dirige a sus rutas respectivas.
 
 <div class="tg-files">
 <div class="f"><span class="fn">01_keyframes.log</span><span class="fd">cambios de escena</span></div>
