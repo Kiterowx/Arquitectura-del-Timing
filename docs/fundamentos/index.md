@@ -1,35 +1,28 @@
-# Fundamentos del timing
+# Timing fundamentals
 
-El timing decide cuándo aparece y cuándo desaparece cada línea para que la voz, la
-lectura, la escena y la continuidad —cuatro exigencias que suelen chocar— funcionen como
-una sola experiencia. Cada borde se decide con una razón que se puede verificar:
-escuchar dónde está la voz, leer cuánto pesa el texto, mirar qué hace la imagen y comparar
-con las líneas vecinas.
+A cue is assessed against the speech, the time needed to read it, the picture, and the cues around it. A waveform can reveal a quiet onset; readability and the timing of a reaction need to be judged in playback.
 
-Esta sección desarrolla el criterio conceptual. La fase técnica lo instrumenta después;
-aquí está el porqué al que esa instrumentación sirve.
+This section explains those decisions. The [workflow](../tecnica/flujo.md) applies them with Aegisub and Chrono Suite.
 
-## Recorrido
+## Read in order
 
-El orden de lectura va de la anatomía de un borde a los casos difíciles, pasando por las
-dos fases del trabajo y la jerarquía que las gobierna.
+1. [Start and end times](teoria.md): what each edge has to do.
+2. [Segment the dialogue](segmentacion.md): decide what belongs in each cue.
+3. [Raw timing](raw-timing.md): locate the first and last speech sounds.
+4. [Resolve competing priorities](filosofia.md): reading, speech, cuts, and continuity.
+5. [Post-timing](post-timing.md): add padding, snap to cuts, and close distracting gaps.
+6. [Timing decisions](casos.md): recurring situations and their exceptions.
+7. [Difficult cases](casos-avanzados.md): fades, delayed reveals, reactions, overlapping voices, and long tails.
+8. [Reading speed and timing limits](criterios.md): CPS, duration, and frame calculations.
+9. [Glossary](glosario.md): terms used throughout the guide.
 
-1. [Teoría general del borde](teoria.md) define el inicio, el final y la vecindad, y por qué el final pide más aire que el inicio.
-2. [Segmentación de frases](segmentacion.md) decide cuántas unidades necesita una intervención, antes de fijar ningún tiempo.
-3. [Raw timing](raw-timing.md) pega los dos límites a la actividad de voz como intervalo desnudo.
-4. [Jerarquía de decisión](filosofia.md) ordena los conflictos entre lectura, voz, escena y continuidad.
-5. [Post-timing](post-timing.md) añade márgenes, snap y cadena sobre el intervalo de voz.
-6. [Casos de decisión](casos.md) resuelve las situaciones que más se repiten.
-7. [Casos avanzados](casos-avanzados.md) atiende las excepciones por escena, formulación y continuidad.
-8. [Criterios cuantitativos](criterios.md) fija los rangos de revisión.
-9. [Glosario](glosario.md) reúne el vocabulario práctico.
+## Review checks {#what-i-check}
 
-## Las cuatro preguntas
+| Check | Question |
+| --- | --- |
+| Speech | Where does the dialogue represented by this cue begin and end? |
+| Reading | Is there enough time to understand the displayed text? |
+| Picture | Does a nearby cut change where the cue belongs? |
+| Continuity | Does the transition from the previous cue to the next feel natural? |
 
-Toda línea se decide respondiendo a cuatro preguntas, una por plano. La **voz** pregunta
-dónde empieza y termina la actividad hablada. La **lectura** pregunta cuánto tiempo exige
-el texto visible. La **escena** pregunta qué corte de imagen modifica la permanencia del
-texto. Y la **continuidad** pregunta cómo respira la línea con la anterior y la siguiente.
-
-Ninguna de las cuatro decide sola. El método consiste en saber, en cada borde, cuál de
-ellas manda y cuáles ceden.
+A **cue** is one timed subtitle event; a **line** is a row of text on screen. A two-line subtitle can still be a single cue.

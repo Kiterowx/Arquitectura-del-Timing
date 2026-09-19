@@ -1,22 +1,12 @@
-# Onda comprimida
+# Waveform JSON and SubWave
 
-La última capa técnica trabaja sobre la onda comprimida del audio: el cronometraje
-automático la lee, la vista de forma de onda la dibuja y un editor web corrige el
-pegado sobre ella. Es el material con el que se estudia un caso difícil, se documenta
-una decisión, se enseña el criterio a otra persona o se repara un timing bruto lejos
-del entorno de producción.
+The same waveform JSON can drive Lazy's detection and a visual editor. In the browser, it provides a visual reference for inspecting a proposed boundary or correcting raw timing. Audio must be loaded separately for listening.
 
-## La onda comprimida
+## What the JSON stores
 
-Una pista de audio tiene decenas de miles de muestras por segundo; dibujarlas todas
-para ver una frase es derrochador. La onda comprimida resuelve esto guardando, en
-lugar de cada muestra, el valor mínimo y máximo de pequeños bloques de tiempo, y lo
-hace a varios niveles de resolución a la vez: un nivel grueso para ver un minuto de
-audio de un vistazo, uno fino para distinguir el ataque de una consonante. Quien
-dibuja la onda elige el nivel según cuánto haya ampliado.
+Instead of saving every audio sample, the generator records the minimum and maximum in short blocks. It repeats this at several resolutions so an editor can draw a phrase or a longer passage without plotting every sample.
 
-El archivo declara primero las propiedades globales del audio y después la lista de
-niveles. Cada nivel guarda sus picos como pares de mínimo y máximo intercalados:
+This example contains two levels of a 4 ms fragment. Each `peaks` array alternates minimum and maximum values:
 
 ```json
 {
@@ -50,93 +40,44 @@ niveles. Cada nivel guarda sus picos como pares de mínimo y máximo intercalado
 }
 ```
 
-Dentro de cada nivel, `pointMs` dice cuánto tiempo cubre cada punto, `samplesPerPoint`
-cuántas muestras se resumieron en él y `points` cuántos puntos tiene el nivel; `peaks`
-es la secuencia de pares mínimo/máximo. Para timing, el campo que más importa es
-`pointMs`: cuanto más pequeño, más fino el dibujo y mejor se distinguen los ataques
-reales. El nivel base del generador oficial es de 1 ms; los niveles siguientes duplican
-la escala para dibujar tramos largos con menos puntos. `amplitudeMin` y `amplitudeMax`
-permiten normalizar la altura del trazo para que la onda use todo el alto disponible.
+| Field | Meaning |
+| --- | --- |
+| `pointMs` | Time covered by one min/max pair. |
+| `samplesPerPoint` | Number of audio samples summarized by that pair. |
+| `points` | Number of pairs in the level. |
+| `peaks` | Interleaved minimum and maximum amplitudes. |
+| `amplitudeMin` / `amplitudeMax` | Full amplitude range used to scale the drawing. |
 
-Este es el archivo que produce el generador de onda y que el método de cronometraje
-simple recorre para encontrar la voz. La misma estructura sirve a una representación
-gráfica y a la detección automática, lo que mantiene una sola fuente para mirar y para
-medir.
+The generator's base level is 1 ms at 48 kHz: 48 samples per point. Later levels double the scale. Finer resolution helps show short attacks, but the picture still does not tell you what produced a peak. The original sound cannot be reconstructed or played from these extrema.
 
-## Mirar la onda
+## Read the contour with the audio
 
-Leer la onda es leer la silueta de la frase. El trazo sube en el ataque de cada
-palabra, se sostiene en el cuerpo y baja en la cola; entre intervenciones cae a la
-línea de base. Esa forma es la que guía los dos bordes.
+An attack, a sustained body, and a decay can suggest where a phrase starts and ends. Breaths, music, and separation artifacts can have similar shapes. Listen before accepting a boundary. Reading time needs a separate check; it cannot be inferred from the waveform.
 
-<figure class="tg-fig tg-strip">
-<span class="tg-eyebrow">Una frase en la onda</span>
-<div class="lane">
-<span class="seg aire" style="left:6%;width:7%"><i>base</i></span>
-<span class="seg voz" style="left:13%;width:50%">cuerpo de la voz · «espera, escúchame»</span>
-<span class="seg aire" style="left:63%;width:11%"><i>cola</i></span>
-<i class="pin" style="left:13%"></i>
-<i class="kf" style="left:82%"></i>
-</div>
-<div class="scale"><span class="v" style="left:13%">ataque</span><span class="e" style="left:82%">keyframe</span></div>
-<div class="tg-keys">
-<b class="k-voz">el ataque marca el inicio</b>
-<b class="k-aire">la cola decide hasta dónde llega el final</b>
-<b class="k-escena">un keyframe cercano puede cerrar la línea</b>
-</div>
-<span class="cap">El <b>ataque</b> fija el inicio; la <b>cola</b> de energía dice cuánto aire de lectura cabe antes de que la frase muera. Donde la onda no basta para decidir, se cruza con las demás señales.</span>
-</figure>
+## Edit in SubWave
 
-La altura del trazo, normalizada con `amplitudeMin` y `amplitudeMax`, distingue una
-voz franca de un resto tenue; la resolución, fijada por `pointMs`, decide si se ve el
-filo de una consonante o solo el bulto de la frase. La misma estructura sirve a la
-vista gráfica y a la detección automática, lo que mantiene una sola fuente para mirar
-y para medir.
+[SubWave](https://kiterowx.github.io/SubWave-Editor/) loads the waveform, displays subtitle events over it, and lets you move their edges. It runs in a modern browser.
 
-## El editor sobre la onda
+1. Load the episode's `.waveform.json`.
+2. Load the matching `.ass`, `.ssa`, or `.srt` subtitle file.
+3. Load the audio and select a cue from the timeline or list.
+4. Listen to the passage, then drag a boundary or edit its time in the panel.
+5. Export and inspect the result before replacing your working subtitle.
 
-[SubWave](https://kiterowx.github.io/SubWave-Editor/) es la
-vista de forma de onda convertida en editor,
-que carga la onda comprimida del episodio, dibuja encima las líneas del subtítulo y
-permite corregir cada borde arrastrándolo sobre la evidencia. Funciona en cualquier
-navegador, sin instalación, así que el pegado se repara también en una máquina donde
-Aegisub queda lejos.
-
-El trabajo dentro de la página sigue el orden de carga. Primero entra el
-`.waveform.json` del episodio, el mismo archivo que produce **Waveform JSON**; después
-el subtítulo, en `.ass`, `.ssa` o `.srt`; y de forma opcional el audio, que habilita
-escuchar el tramo de cada línea antes de dar un borde por bueno. Cada línea se elige
-desde la línea de tiempo o desde la lista, y sus dos límites se mueven arrastrándolos
-sobre la onda o escribiendo el valor en el panel de edición. Al exportar, el `.ass`
-conserva la cabecera, los estilos y todos los campos que quedaron sin tocar: del
-archivo cambian solo los tiempos corregidos, y el guion vuelve a producción intacto en
-todo lo demás. La exportación a `.srt` cubre los formatos de texto plano.
+ASS export is intended to retain the header, styles, and untouched fields while updating the edited times. Reopen the exported file in Aegisub and compare those fields with the saved copy, especially after converting text or format. SRT export cannot preserve ASS-specific styling.
 
 <figure class="tg-fig">
-<span class="tg-eyebrow">Carga completa del episodio</span>
-<img src="../../assets/ejemplos/editor-web-episodio-3-vista-general.png" alt="Editor web con waveform, subtítulos, audio y panel de edición cargados">
-<span class="cap">Con la onda, los subtítulos y el audio cargados, la línea seleccionada queda visible en la línea de tiempo y en el panel de edición. El conteo confirma que el subtítulo entró completo y los botones de exportación quedan activos.</span>
+<span class="tg-eyebrow">The episode loaded in the editor</span>
+<img src="../../assets/ejemplos/editor-web-episodio-3-vista-general.png" alt="SubWave with waveform, subtitle list, audio, and editing panel loaded" loading="lazy">
+<figcaption>Confirm that all events loaded, then locate the selected cue in the timeline and editing panel.</figcaption>
 </figure>
 
-Su terreno es el timing bruto. La onda enseña el ataque y la cola de cada frase, y el
-arrastre fino deja el intervalo desnudo de voz donde el criterio de
-[Raw timing](../fundamentos/raw-timing.md) lo pide: es la herramienta para reparar un
-pegado que entró tarde, cortó una sílaba o arrastró ruido, línea por línea y con la
-evidencia delante. Los márgenes, el snap y la cadena se aplican después, en Aegisub,
-donde viven los keyframes y el post-timing de
-[Chrono Suite](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md).
+This step addresses [raw timing](../fundamentos/raw-timing.md): a late start, a clipped syllable, or an end attached to residual noise. Padding, scene snapping, and chaining come afterward in Aegisub, with its keyframes and Chrono Suite tools.
 
 <figure class="tg-fig">
-<span class="tg-eyebrow">Borde elegido sobre la onda</span>
-<img src="../../assets/ejemplos/editor-web-episodio-3-borde-voz.png" alt="Línea seleccionada sobre la onda de audio en el editor web">
-<span class="cap">El rectángulo seleccionado deja ver el inicio, el final y la energía de voz. El ajuste se decide mirando el ataque y la cola antes de exportar el subtítulo corregido.</span>
+<span class="tg-eyebrow">Inspect the selected boundary</span>
+<img src="../../assets/ejemplos/editor-web-episodio-3-borde-voz.png" alt="Selected subtitle interval over the audio waveform in SubWave" loading="lazy">
+<figcaption>Zoom in to compare the edge with the attack or tail, then listen at normal speed before exporting.</figcaption>
 </figure>
 
-En la jerarquía de la fase técnica ocupa el mismo escalón que el pegado manual dentro
-del editor de escritorio: decide sobre el plano de la voz y deja la lectura, la escena
-y la continuidad para las pasadas siguientes. Con el método Lazy forma un espejo
-deliberado: ambos leen el mismo `.waveform.json`, Lazy lo recorre por su cuenta y el
-editor lo pone delante de los ojos, de modo que un borde que la automatización propuso
-se puede revisar a mano sobre la misma señal que lo originó. Y la jerarquía de
-Fundamentos sigue siendo el techo: la onda muestra dónde está la voz, y la razón de
-cada ajuste se nombra igual que en cualquier otro borde.
+Lazy and SubWave read the same waveform data. That makes it possible to inspect an automatically proposed edge against the signal that produced it, while keeping the voice and the meaning as the final reference.

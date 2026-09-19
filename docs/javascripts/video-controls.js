@@ -1,5 +1,16 @@
 (function () {
   var pairSeq = 0
+  var spanish = document.documentElement.lang === "es"
+  var translations = {
+  "Play comparison": "Reproducir comparación",
+  "Pause comparison": "Pausar comparación",
+  "Mute audio": "Silenciar audio",
+  "Unmute audio": "Activar audio",
+  "Comparison divider: ": "Divisor de comparación: ",
+  "Drag to compare the two versions": "Mueve el divisor para comparar las versiones",
+  "The comparison could not play. Check that both videos loaded, then try again.": "No se pudo reproducir la comparación. Comprueba que ambos vídeos se cargaron e inténtalo de nuevo."
+}
+  function message(text) { return spanish ? translations[text] : text }
 
   function bindVideos(root) {
     root.querySelectorAll("video").forEach(function (video) {
@@ -7,9 +18,10 @@
         return
       }
       video.dataset.tgVideoBound = "1"
-      video.removeAttribute("muted")
-      video.defaultMuted = false
-      video.muted = false
+      var silent = video.dataset.tgPairSecondary === "1"
+      video.toggleAttribute("muted", silent)
+      video.defaultMuted = silent
+      video.muted = silent
       ;["play", "playing"].forEach(function (eventName) {
         video.addEventListener(eventName, function () {
           document.querySelectorAll("video").forEach(function (other) {
@@ -57,16 +69,20 @@
       video.defaultMuted = false
       video.muted = false
       video.loop = true
-      video.preload = "auto"
+      video.preload = "metadata"
       video.dataset.tgPairGroup = group
     })
     videoB.classList.add("top")
+    videoB.dataset.tgPairSecondary = "1"
 
     var wipe = document.createElement("div")
     wipe.className = "tg-wipe"
 
     var frame = document.createElement("div")
     frame.className = "frame is-paused"
+    frame.tabIndex = 0
+    frame.setAttribute("role", "button")
+    frame.setAttribute("aria-label", message("Play comparison"))
 
     var split = document.createElement("span")
     split.className = "split"
@@ -84,7 +100,7 @@
     range.min = "0"
     range.max = "100"
     range.value = "50"
-    range.setAttribute("aria-label", labels[0] + " / " + labels[1])
+    range.setAttribute("aria-label", message("Comparison divider: ") + labels[0] + " / " + labels[1])
 
     frame.appendChild(videoA)
     frame.appendChild(videoB)
@@ -92,7 +108,30 @@
     frame.appendChild(tagL)
     frame.appendChild(tagR)
     wipe.appendChild(frame)
+    var controls = document.createElement("div")
+    controls.className = "tg-wipe-controls"
+    var playButton = document.createElement("button")
+    playButton.type = "button"
+    playButton.textContent = message("Play comparison")
+    var muteButton = document.createElement("button")
+    muteButton.type = "button"
+    muteButton.textContent = message("Mute audio")
+    muteButton.setAttribute("aria-pressed", "false")
+    controls.appendChild(playButton)
+    controls.appendChild(muteButton)
+    wipe.appendChild(controls)
+    var sliderLabel = document.createElement("label")
+    range.id = group + "-divider"
+    sliderLabel.htmlFor = range.id
+    sliderLabel.className = "tg-wipe-label"
+    sliderLabel.textContent = message("Drag to compare the two versions")
+    wipe.appendChild(sliderLabel)
     wipe.appendChild(range)
+    var playbackError = document.createElement("p")
+    playbackError.className = "tg-field-error"
+    playbackError.setAttribute("role", "status")
+    playbackError.hidden = true
+    wipe.appendChild(playbackError)
 
     var noteBox = document.createElement("div")
     noteBox.className = "tg-wipe-notes"
@@ -116,6 +155,7 @@
     }
 
     function setSplit(value) {
+      range.setAttribute("aria-valuetext", value + "% " + labels[0] + ", " + (100 - value) + "% " + labels[1])
       split.style.left = value + "%"
       videoB.style.clipPath = "inset(0 0 0 " + value + "%)"
     }
@@ -124,38 +164,73 @@
       setSplit(range.value)
     })
 
-    videoA.addEventListener("timeupdate", function () {
-      if (Math.abs(videoA.currentTime - videoB.currentTime) > 0.08) {
+    var syncFrame
+    function syncVideos() {
+      if (Math.abs(videoA.currentTime - videoB.currentTime) > 0.04) {
         videoB.currentTime = videoA.currentTime
       }
-    })
+      if (!videoA.paused) {
+        syncFrame = requestAnimationFrame(syncVideos)
+      }
+    }
 
     function playBoth() {
+      playbackError.hidden = true
       videoB.currentTime = videoA.currentTime
-      videoA.play()
-      videoB.play()
-      frame.classList.remove("is-paused")
+      Promise.all([videoA.play(), videoB.play()]).then(function () {
+        if (!videoA.paused) {
+          cancelAnimationFrame(syncFrame)
+          syncVideos()
+          frame.classList.remove("is-paused")
+          frame.setAttribute("aria-label", message("Pause comparison"))
+          playButton.textContent = message("Pause comparison")
+        }
+      }).catch(function () {
+        pauseBoth()
+        playbackError.textContent = message("The comparison could not play. Check that both videos loaded, then try again.")
+        playbackError.hidden = false
+      })
     }
 
     function pauseBoth() {
       videoA.pause()
       videoB.pause()
+      cancelAnimationFrame(syncFrame)
       frame.classList.add("is-paused")
+      frame.setAttribute("aria-label", message("Play comparison"))
+      playButton.textContent = message("Play comparison")
     }
 
-    frame.addEventListener("click", function () {
+    function togglePlayback() {
       if (videoA.paused) {
         playBoth()
       } else {
         pauseBoth()
       }
+    }
+
+    playButton.addEventListener("click", togglePlayback)
+    muteButton.addEventListener("click", function () {
+      videoA.muted = !videoA.muted
+      muteButton.textContent = videoA.muted ? message("Unmute audio") : message("Mute audio")
+      muteButton.setAttribute("aria-pressed", String(videoA.muted))
+    })
+    frame.addEventListener("click", togglePlayback)
+    frame.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault()
+        togglePlayback()
+      }
     })
 
     videoA.addEventListener("pause", function () {
+      cancelAnimationFrame(syncFrame)
       if (!videoB.paused) {
         videoB.pause()
       }
       frame.classList.add("is-paused")
+      frame.setAttribute("aria-label", message("Play comparison"))
+      playButton.textContent = message("Play comparison")
     })
   }
 

@@ -3,8 +3,8 @@
      width="8480" height="512" viewBox="0 0 8480 512"
      role="img" aria-labelledby="title desc"
      color="#64748b" shape-rendering="geometricPrecision">
-  <title id="title">Forma de onda del tempo textual</title>
-  <desc id="desc">La silueta de la voz muestra los impulsos hablados que orientan la extensión de la frase.</desc>
+  <title id="title">Text distributed across spoken units</title>
+  <desc id="desc">Original Spanish example showing how subtitle segments follow the spoken rhythm.</desc>
   <rect width="100%" height="100%" fill="none"/>
   <line x1="0" y1="256" x2="8480" y2="256" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/>
   <path fill="currentColor" d="

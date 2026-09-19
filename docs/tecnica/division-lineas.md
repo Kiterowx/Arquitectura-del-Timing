@@ -1,115 +1,51 @@
-# División de líneas
+# Split, rebreak, and join cues
 
-Antes de pegar tiempos finos conviene que cada línea contenga una sola unidad de
-lectura. Una línea con dos frases independientes arrastra dos ataques vocales, un
-final difícil de pegar y una velocidad de lectura inflada por texto que en realidad
-pertenece a dos momentos distintos. Resolver eso es un trabajo de texto, y se hace
-con las utilidades de Chrono Suite antes de que el cronometraje entre en juego.
+Settle the text before fine timing. Two sentences with different spoken rhythms may need separate cues; one wide sentence may only need a better displayed line break. Those are different operations in Chrono Suite.
 
-El criterio de cuándo dividir y cuándo conservar unido es el de
-[Segmentación de frases](../fundamentos/segmentacion.md). Lo que sigue es cómo se
-ejecuta esa decisión con la herramienta, distinguiendo tres operaciones que se
-confunden con facilidad: partir una línea en varios eventos, mover el salto de
-renglón dentro de un evento, y volver a unir lo que quedó fragmentado.
+For the decision itself, see [segmentation](../fundamentos/segmentacion.md).
 
-## Proteger el formato primero
+## Check formatting before and after
 
-Una línea de diálogo puede llevar etiquetas de formato —cursivas, posiciones,
-colores— entremezcladas con el texto. Cualquier división que parta el texto a
-ciegas corre el riesgo de cortar una etiqueta por la mitad o de repartir mal el
-formato entre los fragmentos.
+Work on a copy. **Extract Tags** moves leading ASS override blocks into **Effect**; **Reinsert Tags** prepends the saved blocks to the text. This pair does not extract or reposition tags embedded within the dialogue.
 
-La utilidad **Extract Tags** evita ese riesgo: traslada los bloques de override
-desde el texto al campo `Effect`, dejando el diálogo en texto limpio sobre el que
-dividir sin peligro. Terminada la división, **Reinsert Tags** devuelve cada
-etiqueta a su sitio. El par funciona como un paréntesis alrededor de todo el
-trabajo de segmentación: se abre antes de partir y se cierra al final, sobre toda
-la selección.
+After splitting or joining, check italics, color changes, and tags attached to particular words. Relative timings in `\t`, `\move`, `\fad`, or karaoke tags need separate attention when an event's start changes.
 
-## Partir en eventos
+## Split into timed events
 
-Dividir en eventos crea varias líneas temporizadas a partir de una. Es lo que se
-hace cuando un solo subtítulo cubre dos frases que merecen bordes propios.
+| Tool | What it splits | Check afterward |
+| --- | --- | --- |
+| Split by Sentence | Sentence-ending punctuation, including ellipses. | Each proposed unit follows its own speech. |
+| Split by Comma | The same boundaries, plus commas, colons, and semicolons. | The clauses remain easy to follow and each has enough reading time. |
+| Divide by `\N` | Existing displayed line breaks. | Both new events make sense and have enough time. |
 
-**Split by Sentence** parte por límite de oración: separa allí donde una frase
-cierra y otra empieza. Es la división natural para dos enunciados completos dentro
-del mismo evento. **Split by Comma** parte por coma, útil cuando una pausa
-sintáctica clara divide la línea en dos tramos que sostienen sentido por separado;
-conviene usarla con cuidado, porque no toda coma marca una frontera de lectura, y
-encadenar fragmentos que empiezan como continuación produce el efecto de párrafo
-incompleto que la segmentación busca evitar. **Divide by \N** parte por los saltos
-de renglón ya presentes, convirtiendo en eventos separados lo que estaba escrito
-como dos renglones de uno solo.
-
-Tras partir, la revisión es de sentido: que cada línea resultante se entienda por
-sí misma, que un fragmento interrumpido conserve intención clara y que ninguna
-quede tan breve que no dé tiempo a leerla.
+These tools divide the original duration in proportion to the counted characters in each part. They do not locate the spoken pause. Both punctuation splitters also recognize a hyphen surrounded by spaces, so inspect abbreviations, pauses, and dialogue separators before keeping every proposed split. Listen and adjust each new boundary against the audio.
 
 <figure class="tg-fig">
-<span class="tg-eyebrow">La división sobre líneas reales</span>
+<span class="tg-eyebrow">Inspect the result of each operation</span>
 <div class="tg-compare tg-video-stack">
-<div class="col">
-<h4>Dos frases separables</h4>
-<video src="../../assets/ejemplos/segmentacion-dos-palabras.mp4" controls loop playsinline preload="metadata"></video>
-<p class="note">Una línea que encierra dos unidades habladas se reparte para que cada ataque y cada cierre caigan sobre un borde propio.</p>
+<div class="col"><h4>Two spoken units</h4><video src="../../assets/ejemplos/segmentacion-dos-palabras.mp4" controls loop playsinline preload="metadata"></video><p class="note">“Por supuesto. Yo también mejoro día a día.” means “Of course. I’m getting better every day, too.” The answer and explanation appear together.</p></div>
+<div class="col"><h4>Split by Sentence</h4><video src="../../assets/ejemplos/segmentacion-dividido.mp4" controls loop playsinline preload="metadata"></video><p class="note">“Por supuesto.” (“Of course.”) appears first. The explanation, “Yo también mejoro día a día.” (“I’m getting better every day, too.”), follows in its own cue.</p></div>
+<div class="col"><h4>Split by Comma</h4><video src="../../assets/ejemplos/segmentacion-por-coma.mp4" controls loop playsinline preload="metadata"></video><p class="note">The first cue begins “Por ahora, ya vimos las flores…”: the flowers of all four seasons have been covered. The next begins “así que ahora te enseñaré…”: “so now I’ll tell you…” It introduces the stories behind those flowers. The Spanish “así que” (“so”) keeps the connection clear across the split.</p></div>
 </div>
-<div class="col">
-<h4>Split by Sentence</h4>
-<video src="../../assets/ejemplos/segmentacion-dividido.mp4" controls loop playsinline preload="metadata"></video>
-<p class="note">Parte donde una oración cierra y otra empieza: dos enunciados completos dentro de un evento pasan a dos líneas propias.</p>
-</div>
-<div class="col">
-<h4>Split by Comma</h4>
-<video src="../../assets/ejemplos/segmentacion-por-coma.mp4" controls loop playsinline preload="metadata"></video>
-<p class="note">Parte por una pausa sintáctica clara. Se usa con cuidado, porque una coma de continuación deja fragmentos con sentido incompleto.</p>
-</div>
-</div>
-<span class="cap">Cada operación deja unidades que se sostienen solas, la condición para pegar tiempos finos sin rehacer el borde después.</span>
+<figcaption>The first comparison separates an answer from its explanation. The comma split gives each clause its own screen time while preserving the connection between them.</figcaption>
 </figure>
 
-## Romper en renglones
+## Change the displayed line break
 
-Romper en renglones reparte el texto de una sola línea en dos renglones visuales,
-conservando intactos el evento y sus tiempos. Es una decisión de composición.
+**Smart Break** proposes a break when the rendered text exceeds the available width. Text that already fits on one line stays as it is. **Pivot `\N`** moves an existing break; **Remove `\N`** removes breaks and compacts spaces.
 
-**Smart Break** inserta un salto en la posición óptima, y solo cuando el texto
-renderizado supera el ancho disponible: si la línea cabe en un renglón, la deja en
-paz. **Pivot \N** desplaza un salto ya existente hacia un punto de corte mejor.
-**Remove \N** elimina los saltos y compacta los espacios, para volver a empezar el
-renglonado o para dejar la línea en un solo renglón.
+These operations change the layout within one event while keeping its times. For example, “I left the keys / on the kitchen table.” can be a readable two-line cue without becoming two separately timed subtitles. Here `/` illustrates a line break; ASS uses `\N`.
 
-La distinción importa porque cada problema tiene su operación: una línea demasiado
-ancha para leerse se resuelve renglonando, y dos frases con ritmos distintos se
-resuelven partiendo en eventos.
+## Join fragmented cues
 
-## Volver a unir
+**Join Lines** combines the selected events into one spanning their earliest start and latest end. Select only the material that belongs together: unselected events between them can remain inside that interval. **Complete Sentences** joins an incomplete line to a following lowercase continuation; uncertain cases, such as overlaps or a following capital, receive `[POSSIBLE-JOIN]` for review.
 
-La segmentación también va en sentido contrario: a veces lo correcto es fundir lo
-que estaba separado.
+For overlapping groups, **Join Overlaps** keeps each text on its own displayed line and extends the retained event to the group's bounds. **Join Overlap Sentences** treats the group as one continuous sentence. **Join Same Text** merges adjacent events with identical text.
 
-**Join Lines** une las líneas consecutivas seleccionadas en una sola.
-**Complete Sentences** automatiza el caso más común de fragmentación: une una línea
-incompleta con la siguiente cuando el texto que sigue empieza en minúscula —señal
-de que era continuación de la misma frase—. Los casos en que la unión es dudosa,
-porque hay solape o porque el texto siguiente no empieza en minúscula, quedan marcados
-con `[POSSIBLE-JOIN]` para revisarlos a mano.
+Inspect speaker changes and formatting after every join. Preserve deliberate clause divisions, including the flower lesson above: its lowercase continuation is a useful split even if Complete Sentences proposes joining it.
 
-Para diálogo simultáneo hay uniones específicas. **Join Overlaps** funde grupos de
-líneas cuyos tiempos se solapan, extiende la conservada a los límites del grupo y
-mantiene cada texto en su propio renglón. **Join Overlap Sentences** hace lo mismo
-tratando el grupo como una sola frase continua. **Join Same Text** une líneas
-contiguas con texto idéntico, habitual tras ciertos procesos automáticos.
+## Translate before final segmentation
 
-## Traducir antes de segmentar
+Translate complete thoughts first, then segment the settled wording against the audio. Translation changes length, word order, and punctuation; those changes can move the natural break.
 
-Cuando el material de origen se va a traducir, suele rendir más traducir las frases
-completas primero y segmentar después, con el cronometraje a la vista. La
-traducción cambia la longitud, el orden y la puntuación, y con ellos el punto
-natural de corte. Una segmentación decidida sobre texto que todavía busca su forma
-final se rehace dos veces; decidida sobre la frase ya estable, se decide una.
-
-## Comprobar la carga
-
-**Count CPS** cierra el ciclo sin salir del editor: muestra la velocidad de lectura
-promedio de la selección, útil para confirmar que una división bajó la carga que la
-motivó.
+**Count CPS** reports the selection's total counted characters divided by its total duration, plus the highest individual CPS and its event. Each cue’s duration therefore contributes to the calculation; averaging the individual CPS values equally would give a different result. The count excludes spaces and recognized punctuation. Use the same counting method when comparing it with another tool; [reading speed](../fundamentos/criterios.md) explains the differences.

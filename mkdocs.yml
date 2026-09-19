@@ -1,39 +1,38 @@
-site_name: Guía de Timing de Subtítulos
+site_name: The subtitle timing guide
 site_description: >-
-  Método para decidir, con criterio justificable, en qué instante aparece y
-  desaparece cada línea de subtítulo: fundamentos del timing y fase técnica.
-site_author: Kiterow
+  A practical guide to speech boundaries, reading time, scene cuts,
+  and subtitle timing with Aegisub and Chrono Suite.
+site_author: Kite
 site_url: https://kiterowx.github.io/Arquitectura-del-Timing/
 
 theme:
   name: material
-  language: es
+  language: en
   icon:
     logo: material/timer-outline
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
-      accent: blue
+      primary: teal
+      accent: teal
       toggle:
         icon: material/weather-night
-        name: Cambiar a modo oscuro
+        name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
-      accent: light blue
+      primary: teal
+      accent: teal
       toggle:
         icon: material/weather-sunny
-        name: Cambiar a modo claro
+        name: Switch to light mode
   font:
-    text: Inter
+    text: Source Sans 3
     code: JetBrains Mono
   features:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
     - navigation.top
-    - navigation.tracking
     - navigation.indexes
     - navigation.footer
     - toc.follow
@@ -52,8 +51,9 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
-      title: Contenido
   - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -64,34 +64,89 @@ markdown_extensions:
 
 extra_css:
   - stylesheets/extra.css
-  - stylesheets/video-layout.css
 
 extra_javascript:
   - javascripts/video-controls.js
   - javascripts/external-links.js
+  - javascripts/reading-speed.js
+  - javascripts/language-switch.js
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: es
+          name: Español
+          build: true
+          site_name: Guía de timing de subtítulos
+          site_description: Guía para ajustar voz, lectura, cortes de escena y continuidad con Aegisub y Chrono Suite.
+          theme:
+            palette:
+              - media: "(prefers-color-scheme: light)"
+                scheme: default
+                primary: teal
+                accent: teal
+                toggle:
+                  icon: material/weather-night
+                  name: Cambiar a modo oscuro
+              - media: "(prefers-color-scheme: dark)"
+                scheme: slate
+                primary: teal
+                accent: teal
+                toggle:
+                  icon: material/weather-sunny
+                  name: Cambiar a modo claro
+          nav_translations:
+            Home: Inicio
+            Fundamentals: Fundamentos
+            What a timing boundary does: Inicio y final del subtítulo
+            Segment the dialogue: Segmentar el diálogo
+            Raw timing: Timing bruto
+            Resolve competing priorities: Resolver prioridades
+            Padding, snapping, and chaining: Márgenes, snap y cadenas
+            Timing decisions in practice: Decisiones en la práctica
+            Timing exceptions: Casos avanzados
+            Reading speed and limits: Velocidad de lectura y límites
+            Glossary: Glosario
+            Tools and workflow: Herramientas y flujo de trabajo
+            The episode workflow: Un episodio de principio a fin
+            Split, rebreak, and join: Dividir, renglonar y unir
+            Prepare the vocal track: Preparar las vocales
+            Generate analysis files: Generar archivos de análisis
+            Post-timing tools: Herramientas de post-timing
+            Waveform JSON and SubWave: Waveform JSON y SubWave
+            Audit the timing: Auditar el timing
+            Algorithm notes: Algoritmos
+            References: Referencias
 
 nav:
-  - Inicio: index.md
-  - Fundamentos del timing:
+  - Home: index.md
+  - Fundamentals:
       - fundamentos/index.md
-      - Teoría general del borde: fundamentos/teoria.md
-      - Segmentación de frases: fundamentos/segmentacion.md
-      - Raw timing (pegado): fundamentos/raw-timing.md
-      - Jerarquía de decisión: fundamentos/filosofia.md
-      - Post-timing: fundamentos/post-timing.md
-      - Casos de decisión: fundamentos/casos.md
-      - Casos avanzados: fundamentos/casos-avanzados.md
-      - Criterios cuantitativos: fundamentos/criterios.md
-      - Glosario: fundamentos/glosario.md
-  - Fase técnica:
+      - What a timing boundary does: fundamentos/teoria.md
+      - Segment the dialogue: fundamentos/segmentacion.md
+      - Raw timing: fundamentos/raw-timing.md
+      - Resolve competing priorities: fundamentos/filosofia.md
+      - Padding, snapping, and chaining: fundamentos/post-timing.md
+      - Timing decisions in practice: fundamentos/casos.md
+      - Timing exceptions: fundamentos/casos-avanzados.md
+      - Reading speed and limits: fundamentos/criterios.md
+      - Glossary: fundamentos/glosario.md
+  - Tools and workflow:
       - tecnica/index.md
-      - Flujo de trabajo: tecnica/flujo.md
-      - División de líneas: tecnica/division-lineas.md
-      - Generadores de señales: tecnica/generadores.md
-      - Motor de timing: tecnica/motor.md
-      - Postprocesado: tecnica/postprocesado.md
-      - Onda comprimida y editor web: tecnica/web.md
-      - Auditoría y marcadores: tecnica/auditoria.md
-  - Algoritmos y automatización:
+      - The episode workflow: tecnica/flujo.md
+      - Split, rebreak, and join: tecnica/division-lineas.md
+      - Prepare the vocal track: tecnica/vocales.md
+      - Generate analysis files: tecnica/generadores.md
+      - Auto Timing: tecnica/motor.md
+      - Post-timing tools: tecnica/postprocesado.md
+      - Waveform JSON and SubWave: tecnica/web.md
+      - Audit the timing: tecnica/auditoria.md
+  - Algorithm notes:
       - algoritmos/index.md
-  - Referencias: referencias.md
+  - References: referencias.md

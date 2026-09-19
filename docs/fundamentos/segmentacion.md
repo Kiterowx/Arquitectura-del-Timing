@@ -1,94 +1,41 @@
-# Segmentación de frases
+# Segment the dialogue
 
-La segmentación decide cuántas unidades de subtítulo necesita una intervención hablada.
-Es la primera decisión del timing, anterior a fijar cualquier borde, porque determina
-qué se va a timear. Una unidad bien segmentada reúne tres cosas a la vez: una idea que
-se lee como un todo, un tramo de habla con un ataque y un cierre propios, y una carga
-de lectura que el espectador sostiene sin esfuerzo. Cuando esas tres coinciden en una
-línea, el pegado a la voz se vuelve preciso y el post-timing se vuelve estable.
+Before setting precise times, decide where the viewer should receive each part of the dialogue. A cue needs enough context to follow, enough time to read, and a sensible relationship to the delivery. It can be a complete sentence, a clause, or a brief reaction whose purpose is clear in the scene.
 
-<div class="tg-cue is-warn">
-<span class="tc">0:00:05.10 <span class="arrow">→</span> 0:00:08.40</span>
-<span class="line">No lo sé todavía. ¿Tú qué crees?</span>
-<span class="meta"><span class="tag bad">MULTI-SENTENCE</span><span class="tag warn">dos ataques en un intervalo</span></span>
-</div>
-<div class="tg-cue">
-<span class="tc">0:00:05.10 <span class="arrow">→</span> 0:00:06.60</span>
-<span class="line">No lo sé todavía.</span>
-<span class="meta"><span class="tag ok">unidad propia</span></span>
-</div>
-<div class="tg-cue">
-<span class="tc">0:00:06.80 <span class="arrow">→</span> 0:00:08.40</span>
-<span class="line">¿Tú qué crees?</span>
-<span class="meta"><span class="tag ok">unidad propia</span></span>
-</div>
+In the [video comparison](../tecnica/division-lineas.md#split-into-timed-events), “Por supuesto. Yo también mejoro día a día.” means “Of course. I'm getting better every day, too.” The same speaker gives a short answer, then explains it. One cue reveals both the answer and its explanation at once. Two cues let the answer arrive first and the explanation follow its own delivery. Either structure needs to be judged against the performance.
 
-## Qué resuelve segmentar bien
+| One cue | Two successive cues |
+| --- | --- |
+| Of course. I'm getting better every day, too. | 1. Of course. → 2. I'm getting better every day, too. |
 
-Pegar tiempos funciona mejor cuando cada línea corresponde a una sola emisión hablada
-completa. Si una línea contiene dos frases independientes, el intervalo encierra dos
-ataques, dos cierres y una pausa interna entre ellos, y ninguno de los dos bordes de la
-línea cae sobre un punto natural. La segmentación define esa estructura antes de fijar
-límites: deja cada unidad con un inicio audible, un final audible y una intención
-legible, que son las condiciones para que el resto del trabajo sea limpio.
+## When to split {#when-i-split}
 
-Una segmentación clara previene tres problemas concretos. Evita las líneas que empiezan
-en una idea y terminan en otra. Evita las permanencias forzadas, donde una línea dura de
-más solo para dar tiempo a leer demasiado texto. Y evita los cortes internos donde la
-lectura pediría una pausa distinta a la que marca la voz.
+Separate timing can help when:
 
-## Cuándo separar
+- A statement and its explanation have distinct deliveries.
+- A pause makes room for a reaction, a change of intention, or a new speaker.
+- A later cue holds back information until the voice or picture reveals it.
+- A long sentence has a clause boundary that distributes the reading load naturally.
+- A name or interjection forms a distinct call or response.
 
-La razón para separar es siempre que dos tramos sostienen sentido por su cuenta y
-ganarían bordes propios. Eso ocurre de varias maneras.
+An interruption can leave the grammar unfinished. End the cue with what was actually uttered, preserving the interrupted thought.
 
-Por **sentido**, cuando hay dos frases completas que se entienden cada una por
-separado, cuando una pausa sintáctica clara divide la línea en dos tramos con
-significado propio, o cuando dos ideas avanzan seguidas pero cambia el foco de una a
-otra. Por **intención**, cuando el segundo tramo cambia de registro —de pregunta a
-respuesta, de afirmación a énfasis, de un foco a otro—, cuando un vocativo funciona como
-llamada o reacción independiente, o cuando una interjección lexicalizada cambia el ritmo
-o la emoción de lo que sigue. Por **voz**, cuando el audio muestra dos emisiones
-habladas claramente distintas, o cuando dos hablantes comparten una línea y la
-comprensión depende de marcar el cambio. Por **lectura**, cuando la línea exige tanto
-tiempo en pantalla que la única salida razonable es repartir la carga. Y en una frase
-interrumpida, el corte cae donde termina la intención audible, aunque la gramática
-esperara otro final.
+## When to keep a cue together {#when-i-keep-a-cue-together}
 
-## Cuándo conservar unido
+Keep a phrase together when splitting would separate words the reader needs at once, such as a verb from a short object, or turn a continuous outburst into several flashes. “No! I won't accept it!” can stay together when both expressions form the same refusal.
 
-Separar no siempre mejora; a veces fragmenta. Conviene mantener unido cuando la división
-costaría más de lo que aporta.
+Grammatical dependence alone does not rule out a split. “Otherwise,” can stand briefly before the consequence if the delivery and shot change create that expectation. The [ballroom example](casos-avanzados.md#reveal-the-sentence-as-the-scene-unfolds) shows why the incomplete opening serves the scene. What matters is whether the reader can follow the relationship between the cues.
 
-Se conserva unido cuando la segunda parte **depende gramaticalmente** de la primera y
-no se entiende sin ella. Cuando separar produciría una **cadena de continuaciones**:
-varias líneas seguidas que empiezan como fragmentos incompletos, con esa sensación de
-párrafo partido que cansa la lectura. Cuando la división crearía **líneas demasiado
-breves**, sin tiempo para leerse. Cuando la actuación funciona como una **sola
-emisión**, un único impulso de voz que partir rompería. Y cuando un vocativo, una
-muletilla o una enumeración están tan **integrados** en la frase principal que solo la
-matizan, sin sostener una idea aparte.
+## Splitting at a comma {#a-comma-is-a-candidate-not-an-instruction}
 
-El criterio que zanja las dudas es comparar el coste de cada opción: una línea
-sobrecargada pesa, pero una sucesión de fragmentos incompletos pesa más.
+In the flower lesson, “Por ahora, ya vimos las flores de las cuatro estaciones,” says that the flowers of all four seasons have been covered. The next cue begins “así que ahora te enseñaré…”: “so now I'll tell you…” It introduces the stories behind them. The second cue depends on the first, and “así que” (“so”) makes their connection explicit. The division gives each clause its turn without changing the explanation.
 
-## La coma como punto de corte
+A comma inside a short phrase may offer no comparable benefit. Check the spoken phrasing, reading time, and reveal order before accepting the boundary proposed by **Split by Comma**.
 
-La coma marca a menudo una pausa útil, y puede ser un buen punto de segmentación cuando
-cada lado conserva una intención legible por separado. El riesgo está en abusar de ella:
-dividir por cada coma acumula líneas que empiezan como continuación de la anterior, y esa
-acumulación produce justo la lectura fragmentada que la segmentación trata de evitar. La
-coma divide bien cuando separa dos ideas; divide mal cuando solo separa dos partes de la
-misma idea.
+## Settle the wording first
 
-## Esperar a que el texto se asiente
+Translate the complete thought before committing to its final divisions. Japanese, English, and Spanish can place the main point in different parts of a sentence. Natural wording may require a different split to keep an answer, threat, joke, or revelation from appearing before its dramatic moment.
 
-Cuando el texto todavía está cambiando —una traducción en curso, un guion sin cerrar—,
-conviene posponer las divisiones. La forma final puede alterar la longitud, el orden, la
-puntuación y el punto natural de corte, y una segmentación decidida sobre texto
-provisional se rehace en cuanto el texto se asienta. La división estable se decide mejor
-cuando la frase ya tiene su forma visible definitiva.
+Once the wording is stable, time each resulting unit against the source performance. That can mean different text lengths or cue divisions in different languages. A literal match between word positions can reveal a conclusion early or leave a cue without the information needed to understand it. Keep the order of discovery clear, even when the translated sentence needs a different structure.
 
-La decisión se cierra cuando cada línea contiene una unidad de sentido, una unidad
-hablada y una carga de lectura sostenible. Con eso resuelto, el pegado descrito en
-[Raw timing](raw-timing.md) tiene dónde apoyarse.
+Continue with [raw timing](raw-timing.md) and the [splitting tools](../tecnica/division-lineas.md).

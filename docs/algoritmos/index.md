@@ -1,303 +1,131 @@
-# Algoritmos y automatización
+# How the automation works
 
-La fase técnica muestra qué hace cada herramienta. El razonamiento que hay debajo —cómo
-decide— es lo que interesa a quien quiera reproducirlo, calibrarlo o llevarlo más lejos.
-Conviene separar dos capas: **[Chrono Suite](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md)** coordina la pasada dentro de Aegisub, lee las
-líneas seleccionadas, aplica el post-timing y marca los casos dudosos; el **módulo de
-cronometraje** aporta la lógica multiseñal de Busy. Lazy y Legacy viven como rutas directas
-de Chrono: Lazy usa la onda comprimida, y Legacy conserva la familia histórica de
-Lazytimer Pocket-sized basada en silencios. La jerarquía de Fundamentos sigue siendo el techo: el
-modelo propone un borde con evidencia, y el criterio final confirma que respeta lectura,
-voz, escena y continuidad.
+These notes describe [Chrono Suite 1.5.3](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/Macros/kite.ChronoSuite.lua) and [kite.Timing 1.4.3](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/Modules/kite/Timing.lua). Detection estimates where speech occurs; post-timing changes how long the subtitle stays on screen. Their results need separate checks.
 
-## El problema, formalizado
+## Start with an approximately placed cue
 
-Una línea ocupa un intervalo `[s, e]` en el tiempo. Cronometrarla es elegir `s` y `e`. El
-raw timing los fija sobre la voz: `s` en el primer sonido hablado, `e` en el último. Los
-motores automáticos estiman ese intervalo de voz a partir de las señales del episodio, y el
-post-timing lo convierte en el intervalo visible añadiendo márgenes, snap y cadena.
+The existing start `s` and end `e` define where the detector can look. Place the cue over its own dialogue first. A window containing another speaker can produce convincing boundaries for the wrong line.
 
-El flujo es una cadena de transformaciones sobre el tiempo:
+| Method | Search area | Consequence |
+| --- | --- | --- |
+| Lazy | The current interval, expanded by **Search ± (ms)**; the default expansion is zero. | A wider window can recover a missed onset, but can also include another utterance. |
+| Busy | The current interval, with the final detected edges clamped to it. | Increasing Lazy's search setting does not expand Busy's window. |
+| Legacy | Depends on the method in its separate dialog. | Check whether the method can move outward or only trim inward. |
+
+For example, if a cue begins at 1200 ms but its first consonant starts at 1150 ms, Busy cannot recover those missing 50 ms. Move the original start earlier before detecting again. Lazy with 100 ms of extra search could include that consonant, provided it survives the amplitude threshold and cleanup.
 
 ```text
-señales ──▶ intervalo de voz [s, e] ──▶ intervalo visible [s', e']
- (Lazy en Chrono | Busy en módulo | Legacy en Chrono)   (post-timing de Chrono)
+approximately placed cue + analysis files
+    → estimated speech interval
+    → padding, scene snapping, and chaining, if enabled
+    → visible timing and review markers
 ```
 
-Cada etapa admite un tratamiento matemático propio. La detección de voz es un problema de
-clasificación por muestra —voz o silencio— seguido de la extracción de un intervalo. El
-post-timing es una optimización con restricciones. Y la ingeniería inversa es un problema de
-estimación: recuperar los parámetros de un método a partir de su salida.
+## Lazy: amplitude and a threshold
 
-## Dónde vive cada pieza
+Lazy reads the first peak level in the waveform JSON and takes the larger absolute value from each min/max pair. A moving average smooths this amplitude envelope over 10 ms by default. The RMS generator measures a different quantity.
 
-**Chrono Suite** contiene la interfaz de Auto Timing, el filtro de estilos, la selección de
-líneas, la lectura de keyframes del video, las marcas en `Effect`, el modo Lazy, el modo
-Legacy y la aplicación final de márgenes, snap y cadena. Es la capa que toca el subtítulo.
-
-El **módulo de cronometraje** contiene Busy: la lectura conjunta de señales, la generación
-de candidatos y la puntuación multiseñal. Busy pertenece al módulo actual y entrega
-propuestas que Chrono convierte en bordes visibles.
-
-**Lazytimer Pocket-sized** nombra la familia histórica del método Legacy. En Chrono, Legacy funciona
-como una adaptación integrada de esa lógica por silencios. Según la versión concreta, la
-copia local puede estar más nueva o más vieja que el repositorio público, pero su papel en
-la guía es claro: método de compatibilidad por silencios, separado de Lazy y de Busy.
-
-## Lazy: umbral sobre una sola señal
-
-Lazy trabaja con la onda comprimida y nada más. De ella obtiene una envolvente de energía
-`e[n]` —un valor por muestra— y decide, muestra a muestra, dónde hay voz. El método es una
-tubería de cinco pasos, cada uno con un parámetro que lo gobierna.
-
-<div class="tg-steps">
-<div class="st"><span class="k">01</span><span class="h">Suavizar</span><span class="d">Media móvil sobre la envolvente, para que un pico aislado no cuente como palabra.</span></div>
-<div class="st"><span class="k">02</span><span class="h">Umbral</span><span class="d">Corte automático entre voz y silencio a partir de la distribución de energía.</span></div>
-<div class="st"><span class="k">03</span><span class="h">Histéresis</span><span class="d">Dos umbrales, uno para entrar y otro para salir, contra el parpadeo del corte.</span></div>
-<div class="st"><span class="k">04</span><span class="h">Limpiar</span><span class="d">Unir microhuecos, descartar microislas: cierre y apertura morfológicos.</span></div>
-<div class="st"><span class="k">05</span><span class="h">Recortar</span><span class="d">Quitar el derrame tenue pegado al borde, ajeno a la frase.</span></div>
-</div>
-
-El **suavizado** es una media móvil de medio ancho `w`:
+With Otsu enabled, Lazy transforms the smoothed values with `log(1 + amplitude)`, bounds the histogram with the 1st and 99th percentiles, and uses 96 bins. It chooses the threshold that maximizes separation between two classes:
 
 ```text
-ê[n] = (1 / (2w+1)) · Σ_{k=−w..w} e[n+k]
+θ* = argmaxθ ω0(θ) · ω1(θ) · (μ0(θ) − μ1(θ))²
 ```
 
-Un `w` grande ignora el microdetalle; uno pequeño lo conserva. Sobre `ê` se elige el
-**umbral** `θ`. El modo automático supone que la energía se reparte en dos modos —silencio
-cerca de cero, voz por encima— y sitúa `θ` en el valle que mejor los separa, el criterio de
-Otsu: el `θ` que maximiza la varianza entre las dos clases que induce.
+Here `ω` is the fraction of samples in each class and `μ` its mean. These are amplitude classes: a loud effect can enter the active class as readily as speech. With Otsu disabled, the current code uses a fixed interpolation between the 5th and 95th percentiles of the smoothed amplitude:
 
 ```text
-θ* = argmax_θ  ω0(θ)·ω1(θ)·( μ0(θ) − μ1(θ) )²
+θ = P5 + 0.12 · (P95 − P5)
+active[n] = smoothed_amplitude[n] ≥ θ
 ```
 
-donde `ω0, ω1` son las proporciones de muestras a cada lado de `θ` y `μ0, μ1` sus medias.
-Cuando el material engaña a ese cálculo —música sostenida, voz muy baja—, el umbral se fija
-por percentil, `θ = P_q(ê)`, más predecible.
+The resulting mask is processed in this order:
 
-La **histéresis** evita que el borde parpadee alrededor de `θ`. En vez de un corte, usa dos,
-`θ_hi > θ_lo`: la muestra entra en voz cuando `ê[n] ≥ θ_hi` y solo vuelve a silencio cuando
-`ê[n] < θ_lo`. El estado se mantiene entre ambos, de modo que una oscilación pequeña no
-genera una ristra de bordes falsos.
+1. Bridge internal gaps up to 60 ms by default.
+2. Remove remaining active islands shorter than 60 ms by default.
+3. If edge trimming is enabled, discard eligible small, isolated components near the original cue's edges. This test considers their position, mass, and separation from the main activity.
+4. Return the first and last edges of the components left in the window. Internal pauses remain inside that interval.
 
-La **limpieza** es morfológica. Cerrar une los silencios más cortos que `g_min` —une los
-microhuecos internos de una emisión—; abrir descarta los tramos de voz más cortos que
-`i_min` —las islas demasiado breves para ser palabra—. El **recorte de derrame** elimina un
-tramo de voz corto, tenue y separado, pegado al extremo, para evitar que estire el intervalo
-hacia un sonido ajeno.
+A wider search can therefore merge two utterances into one result. More aggressive cleanup can remove a quiet consonant or a short reaction. Compare those sounds with the original mix when the vocal stem or threshold makes them disappear.
+
+## Busy: a weighted interval vote
+
+Busy converts each silence log into complementary activity intervals and combines them with VAD regions and, when usable, an envelope. Each source contributes a weight:
+
+| Source | Weight |
+| --- | ---: |
+| VAD | 1.00 |
+| Silence −30 dB | 0.90 |
+| Silence −40 dB | 0.85 |
+| Silence −50 dB | 0.60 |
+| Envelope | 1.00 |
+
+The initial threshold is half the total participating weight:
 
 ```text
-entrada:  e[0..N]        envolvente de la onda
-          w              medio ancho del suavizado
-          g_min, i_min   hueco e isla mínimos, en muestras
-salida:   [s, e]         intervalo de voz
-
-ê      ← media_móvil(e, w)
-θ_hi   ← umbral_otsu(ê);   θ_lo ← θ_hi − margen
-v[n]   ← histéresis(ê, θ_hi, θ_lo)      # 1 voz, 0 silencio
-v      ← cerrar(v, g_min)               # une huecos < g_min
-v      ← abrir(v, i_min)                # quita islas < i_min
-v      ← recortar_derrame(v)
-s, e   ← primer y último n con v[n] = 1
+vote(t) = Σ_i weight_i · activity_indicator_i(t)
+active(t) = vote(t) ≥ 0.50 · Σ_i weight_i
 ```
 
-El resultado es el tramo de voz que rellena la línea. Esa salida pasa después por el
-post-timing común de Chrono. Busy llega desde el módulo con una decisión multiseñal, y
-Chrono normaliza el borde visible.
+With all five sources participating, the total is 4.35 and the threshold is 2.175. The three silence sources alone contribute 2.35 when all indicate activity, so they can pass even where VAD is inactive. These measurements come from the same audio and can share residual music or noise. The vote is not a probability of speech.
 
-## Busy: fusión de evidencia
+The envelope contributes when enough samples and variation are available. Its threshold lies 35% of the way between reference levels near the 10th and 90th percentiles. A loaded waveform JSON replaces the RMS TSV with a smoothed amplitude envelope. The inputs have different units and the code uses their values directly, so switching between them can change the result.
 
-Busy combina varias señales —silencios a tres umbrales, detección de voz,
-flux, envelope y, si se carga, la onda comprimida como apoyo— y decide por acuerdo
-ponderado. Ese acuerdo es,
-formalmente, una combinación bayesiana de evidencia. La pregunta en cada muestra `n` es la
-probabilidad de que haya voz dada la evidencia `x[n] = (x_1, …, x_m)` de las `m` señales.
+### From active regions to speech boundaries {#busy-boundaries}
 
-El teorema de Bayes escribe esa probabilidad como la evidencia por la creencia previa:
+Busy filters runs shorter than 50 ms, retaining the original runs if that would remove every candidate. It bridges gaps up to 320 ms, then chooses an anchor using:
 
 ```text
-P(voz | x) = P(x | voz) · P(voz) / P(x)
+score = overlap_duration + 0.2 · region_duration
 ```
 
-Lo que decide es la razón entre voz y silencio, donde `P(x)` se cancela. Suponiendo que las
-señales aportan evidencia de forma condicionalmente independiente —la hipótesis *naive
-Bayes*—, la razón se vuelve una suma en escala logarítmica:
+The candidates have already been clipped to the original cue. Their overlap equals their duration, so this selects the longest merged region. Adjacent regions can join it when their separation is at most 900 ms and each added region lasts at least 120 ms. A long original window can consequently absorb separate phrases.
+
+The edges are refined using silence boundaries, envelope crossings, and nearby flux events. VADFlux exports **onsets only**: it supplies no flux offsets for the ending. The spectral TSV is not an input to Busy. In a full pass, an ending that reaches the original window limit can also move to a keyframe within the last 150 ms of that window.
+
+If the first attempt produces no usable interval, Chrono retries with a 0.38 vote fraction, 480 ms bridging, and looser run and pause limits. A weak result alone does not trigger this retry. Reaching the search limit or finding disagreement between boundary sources can produce a weak marker; listen there for clipped speech or the wrong speaker.
+
+## Legacy and Chrono's final pass
+
+Legacy adapts Lazytimer Pocket-sized in a separate dialog:
+
+| Legacy method | How it chooses boundaries |
+| --- | --- |
+| Cluster | Scores and groups nearby silence boundaries within the search distance, using proximity, silence duration, and source confidence. Loaded VAD and flux can add evidence. |
+| Table | Uses the first available silence log in the order −40, −30, −50 dB, builds activity groups, and trims within the original interval. |
+| LazyFusion | Combines silence information to choose boundaries within the original interval; loaded flux can refine them. |
+
+**Silences only** forces LazyFusion and disables auxiliary VAD and flux, regardless of the selected method. Otherwise, Legacy can reuse auxiliary files loaded through **Busy Files...**. Legacy uses neither video keyframes nor the modes below, and leaves `[LZ …]` markers when marking is enabled.
+
+### Chrono's final pass {#chronos-final-pass}
+
+Lazy and Busy share these modes:
+
+| Mode | Operation |
+| --- | --- |
+| Raw voice | Writes detected speech boundaries without padding. |
+| Full + polish | Detects speech, then applies padding, snapping, and chaining. |
+| Post current | Uses the existing edges as speech boundaries and applies the same final pass. |
+
+Full and Post require keyframes loaded in Aegisub. Their base padding is 120 ms before speech and 420 ms after it. Start snapping first looks up to 400 ms before the onset; end snapping first looks up to 800 ms after the ending. **Voice-cut limit**, 100 ms by default, also permits a start after the detected onset or an end before the detected ending. Listen to those inward moves: the algorithm cannot decide whether the removed sound is expendable.
+
+The planner reconciles neighboring cues, preferring usable shared keyframes and resolving padding overlaps where possible. The 400/800 ms maximum lead-in/out settings guide chaining allowances. Preserving an original cut, handling a short gap, or pursuing the minimum duration can produce margins beyond those settings.
+
+The 500 ms duration target is attempted afterward, extending the end first when possible. A remaining short cue is flagged. The 28 CPS check also adds a marker; it does not lengthen a cue until a target reading speed is reached.
+
+Neighbor handling uses the dialogue cues included in the chosen scope and filters. Cues outside that set do not constrain the pass. Review the first and last adjusted cues against untouched neighbors, and inspect overlaps that remain where speech intervals conflict.
+
+**Post current** can add padding again when rerun on already padded times. It also preserves a previous `[TM-NOVOICE]` result without adjusting that cue. After correcting the initial interval, rerun detection to check it; a post-timing pass cannot recover that speech by itself.
+
+## Estimating padding in an existing timing pass
+
+This is a manual comparison for choosing settings; Auto Timing does not estimate inherited padding with a median or MAD. Compare several clear cue boundaries `(a, b)` with measured speech `(α, β)`:
 
 ```text
-ℓ(n) = log  P(voz | x[n]) / P(silencio | x[n])
-     = ℓ0 + Σ_i  w_i · φ_i( x_i[n] )
+δ_in  = α − a
+δ_out = b − β
+MAD = median(|δ − median(δ)|)
 ```
 
-`ℓ0` es la ventaja previa (el log de la proporción voz/silencio esperada), `φ_i` es la
-evidencia local que aporta la señal `i` —positiva si apunta a voz, negativa si a silencio— y
-`w_i ≥ 0` es su peso. La muestra se clasifica como voz cuando `ℓ(n) > τ`. Cada señal entra
-como un sumando: añadir una señal nueva es añadir un término `w · φ`, y de ahí que el modelo
-se extienda sin rehacerse.
+For cues without snapping, overlap, or other exceptions, the median differences suggest the usual margins. MAD describes their spread. Lead-ins of 110, 120, 120, 130, and 400 ms have a median of 120 ms and a MAD of 10 ms. Inspect the 400 ms case: it may reflect a cut or a misplaced start. A small spread in one scene does not establish a pattern for the episode, and a zero MAD does not make every difference an error.
 
-El reparto de pesos es el criterio del método hecho número:
-
-<div class="tg-panel">
-<div class="bar"><span class="dot"></span> Fusión de evidencia — aporte por señal</div>
-<div class="field"><span class="lab">Detección de voz</span><span class="val">Peso mayor: es la única que contesta «¿hay habla?» de forma directa.</span></div>
-<div class="field"><span class="lab">Silencios sensibles</span><span class="val">Pesan más que los estrictos: un silencio sensible es un hueco de verdad.</span></div>
-<div class="field"><span class="lab">Silencios estrictos</span><span class="val">Confirman el silencio profundo; aportan menos en la zona de duda.</span></div>
-<div class="field"><span class="lab">Flux</span><span class="val">Sube la confianza en el ataque: marca el filo exacto donde entra la voz.</span></div>
-<div class="field"><span class="lab">Envelope</span><span class="val">Ajusta la confianza en la cola: separa la palabra de la respiración posterior.</span></div>
-</div>
-
-Donde varias señales coinciden, `ℓ(n)` se aleja de cero y el borde es firme; donde se
-contradicen, los términos se restan y el candidato pierde confianza. El flux y el envelope
-pesan sobre todo en los extremos —el ataque y la cola—, que es donde el borde se juega la
-precisión. La decisión de la muestra se convierte en intervalo con la misma limpieza que
-Lazy, y el flux afina el instante del inicio, que la detección de voz redondea.
-
-```text
-para cada muestra n:
-    ℓ ← ℓ0
-    para cada señal i:  ℓ ← ℓ + w_i · φ_i(x_i[n])
-    v[n] ← (ℓ > τ)
-[s, e] ← extraer_intervalo(v)      # histéresis + limpieza de Lazy
-s      ← afinar_con_flux(s)        # ataque exacto
-```
-
-## Del voto al borde: candidatos, restricciones y puntuación
-
-Detectar voz muestra a muestra es solo la mitad del trabajo: el motor propone un borde
-por línea y elige el mejor. Genera varios **candidatos** `c = (s, e)` alrededor del timing de partida, descarta
-los que rompen una regla dura y puntúa el resto.
-
-Las **restricciones duras** definen el conjunto factible `F`: sin ellas, ningún candidato
-compite.
-
-```text
-F = { c = (s, e) :  e − s ≥ dur_min,          duración mínima
-                    c no solapa a una vecina,  sin invasión
-                    s, e dentro de la ventana de búsqueda }
-```
-
-Sobre `F`, una **función de puntuación** mide cuánta evidencia respalda cada candidato,
-menos lo que lo contradice:
-
-```text
-S(c) = Σ_i  w_i · acuerdo_i(c)  −  λ · contradicciones(c)
-c*   = argmax_{c ∈ F}  S(c)
-```
-
-`acuerdo_i(c)` mide cuánto sostiene la señal `i` los bordes de `c` —una región de voz que
-empieza donde empieza `c`, un flux sobre su inicio, un silencio tras su final—; el término de
-contradicción castiga la evidencia en contra, con `λ` graduando su severidad. El candidato
-ganador `c*` se aplica, y si su puntuación no alcanza un mínimo, la línea queda marcada en
-`Effect` para revisión en vez de forzar un borde sin respaldo. Este es el esqueleto de
-Busy. Lazy y Legacy producen candidatos con menos evidencia, y comparten con Busy la
-normalización final que Chrono aplica sobre el intervalo visible.
-
-## Corregir por ingeniería inversa
-
-Un episodio heredado a veces trae un timing coherente pero desconocido: alguien aplicó un
-método —unos márgenes fijos, una política de snap— y no dejó dicho cuál. Recuperarlo permite
-corregir todo el episodio con un solo criterio en vez de línea por línea. Es un problema de
-estimación de parámetros a partir de la salida observada.
-
-El modelo supone que el tiempo visible heredado nace del tiempo de voz más un margen y un
-posible ajuste a la escena:
-
-```text
-a[j] = α[j] − L_in  + s_in[j]      inicio visible = inicio de voz − lead-in (± snap)
-b[j] = β[j] + L_out + s_out[j]     final visible  = final de voz  + lead-out (± snap)
-```
-
-donde `(a, b)` es el intervalo heredado, `(α, β)` la voz cruda medida de nuevo, `L_in, L_out`
-los márgenes del método y `s` el ajuste de snap, casi siempre cero salvo cuando el borde cayó
-sobre un keyframe. La diferencia a cada lado revela el margen:
-
-```text
-δ_in[j]  = α[j] − a[j]           ≈ L_in   cuando no hubo snap
-δ_out[j] = b[j] − β[j]           ≈ L_out
-```
-
-<figure class="tg-fig tg-strip">
-<span class="tg-eyebrow">Recuperar el margen heredado</span>
-<div class="lane">
-<span class="seg aire" style="left:12%;width:14%"><i>δin</i></span>
-<span class="seg voz" style="left:26%;width:40%">voz cruda</span>
-<span class="seg aire" style="left:66%;width:18%"><i>δout</i></span>
-</div>
-<div class="scale"><span class="v" style="left:12%">inicio heredado</span><span class="v" style="left:84%">final heredado</span></div>
-<span class="cap">El aire entre el <b>visible heredado</b> y la <b>voz cruda</b> a cada lado —δ<sub>in</sub>, δ<sub>out</sub>— es el margen que aplicó el método. Su valor típico, resistente a los casos de escena, lo reconstruye.</span>
-</figure>
-
-El margen del método es el valor central de esas diferencias. La **mediana** lo estima mejor
-que el promedio, porque un puñado de líneas con snap, gag o canción desplazaría la media pero
-no la mediana:
-
-```text
-L_in  ← mediana_j δ_in[j]
-L_out ← mediana_j δ_out[j]
-disp  ← 1.4826 · MAD_j δ_in[j]        dispersión robusta (≈ σ en un reparto normal)
-```
-
-<figure class="tg-fig">
-<span class="tg-eyebrow">El reparto de δ<sub>out</sub> en un episodio heredado</span>
-<div class="tg-hist" style="--x:50%">
-<span class="mad" style="--x0:32%;--w:36%"></span>
-<span class="med"></span>
-<i class="out" style="--h:22%"></i>
-<i style="--h:8%"></i>
-<i style="--h:14%"></i>
-<i style="--h:30%"></i>
-<i style="--h:52%"></i>
-<i style="--h:78%"></i>
-<i style="--h:96%"></i>
-<i style="--h:84%"></i>
-<i style="--h:60%"></i>
-<i style="--h:34%"></i>
-<i style="--h:16%"></i>
-<i style="--h:9%"></i>
-<i class="out" style="--h:12%"></i>
-<i class="out" style="--h:18%"></i>
-</div>
-<div class="tg-hist-ticks"><span class="o" style="left:4%">casos propios</span><span class="m" style="left:50%">L_out = mediana</span><span class="o" style="left:93%">snap · canción</span></div>
-<span class="cap">La campana central es el método: la <b>mediana</b> lo estima y la banda <b>±k·disp</b> lo delimita. Las barras que caen fuera —un snap a un corte, una cola vocal sostenida, una canción— se revisan aparte en lugar de arrastrar la corrección general.</span>
-</figure>
-
-La estimación se confirma con al menos tres muestras independientes coherentes —una `disp`
-baja indica que el patrón es real y no ruido—. Las líneas que se apartan del margen más de
-`k · disp` no obedecen al método: son casos propios —un snap a un corte, una cola vocal sostenida,
-una canción— y se revisan aparte en lugar de arrastrarlos a la corrección general.
-
-```text
-si |δ_in[j] − L_in| > k · disp:   marcar j como caso propio
-```
-
-La **política de snap** se detecta aparte: la fracción de bordes heredados que caen a menos
-de `ε` de un keyframe. Si es alta, el método snapeaba, y la reaplicación debe reproducirlo.
-Con los parámetros recuperados, cada línea se rehace desde su voz cruda —`s = α − L_in`,
-`e = β + L_out`, y luego snap donde la política lo pida—, y el episodio recobra una forma
-consistente.
-
-## Extender la lógica
-
-El modelo deja varios puntos abiertos para quien quiera empujar la automatización:
-
-- **Pesos aprendidos.** Los `w_i` de Busy se fijan a mano por criterio. Un corpus de líneas
-  ya cronometradas permite ajustarlos por regresión logística, que es exactamente el modelo
-  log-lineal de la fusión: cada `w_i` se estima maximizando el acuerdo con el timing revisado.
-- **Previa informada.** `ℓ0` puede dejar de ser constante y depender del contexto —densidad de
-  diálogo de la escena, estilo de la línea—, aportando una previa por tramo en vez de una
-  global.
-- **Calibración por proyecto.** Los umbrales de Lazy y las tolerancias de la auditoría son la
-  misma cifra vista dos veces. Medir su curva de aciertos y falsos positivos sobre un episodio
-  representativo fija el punto de operación de cada uno.
-- **Señales nuevas.** Añadir una medida —separación de locutores, un detector de risa— es
-  añadir un término `w · φ` a `ℓ(n)`, sin tocar el resto de la maquinaria.
-- **Modelos de borde más ricos.** La puntuación `S(c)` admite términos de escena, de lectura y
-  de continuidad, acercando la decisión automática a la jerarquía completa de Fundamentos.
-
-La familia Legacy puede consultarse en
-[Lazytimer Pocket-sized](https://github.com/Kiterowx/lazytimer-pocket-sized). La integración actual separa esa
-ruta de compatibilidad de Lazy y del módulo Busy. Cualquier extensión mantiene el mismo
-techo: el modelo amplía la evidencia y mejora la propuesta, y la decisión final —que el
-borde respete la voz, la lectura, la escena y la continuidad— sigue dependiendo del
-criterio final.
+Compare the proposed settings with a selection checked by hand. Note which first consonants disappear, which unrelated sounds are included, and which pauses become part of a cue. Those differences tell you whether to change a detector setting, move the initial window, or revisit the segmentation.

@@ -1,77 +1,73 @@
-# Criterios cuantitativos
+# Reading speed and timing limits
 
-Los números marcan rangos de revisión. Un valor fuera de rango señala una línea que
-conviene mirar otra vez, y la prioridad de fondo sigue siendo la lectura, la voz, la escena
-y la continuidad. Los números avisan de dónde puede haber un problema; el juicio sobre la
-frase concreta lo resuelve.
+A fast cue may need more time, less text, or a better division. A slow one may be following a deliberate pause. Measurements help locate these cases and compare an adjustment with the original; the text and its place in the scene explain which change will help.
 
-## Cuánto tiempo pide la lectura
+## Count characters consistently
 
-La velocidad de lectura se mide en caracteres por segundo. Por encima de unos 20, la línea
-empieza a exigir más rapidez de la cómoda, y la salida suele ser dividir o condensar antes
-que estirar. Por debajo de unos 7, la línea permanece más de lo que su texto justifica, y
-conviene comprobar si sigue en pantalla después de cerrar la voz.
+Characters per second (CPS) is the character count divided by the duration in seconds. Keep the same counting method when comparing two timings. Chrono's audit and **Count CPS** exclude spaces and recognized punctuation; a count that includes them will be higher for the same subtitle.
 
-La duración tiene dos extremos. Una línea por debajo de unos 700 a 833 milisegundos
-destella: aparece y desaparece antes de que el ojo la fije. Una línea por encima de unos
-5500 milisegundos corre el riesgo de quedar como texto muerto, presente mucho después de
-haberse leído. Entre esos extremos, la duración correcta es la que da tiempo a leer sin
-sobrar.
+“Run, we have to go!” contains 13 letters and 19 characters including spaces and punctuation. At 0.5 seconds, it measures 26 or 38 CPS. At 0.95 seconds, the full character count gives 20 CPS. Those calculations do not tell us whether the longer hold fits the next cue.
 
-La composición acompaña a la duración. Una línea de más de unos 42 caracteres pesa al
-leerse y pide renglonarse o dividirse, y dos renglones son el límite normal: un tercer
-renglón carga la lectura y casi siempre indica que sobra texto o falta una división.
+## Try the count yourself
 
-## Cuánto aire piden los bordes
+Change the text or duration to compare the two counts. This example uses plain text: do not include ASS tags. It counts Unicode code points, so combined accents and emoji sequences may differ from the visible character count in your editor.
 
-El aire de entrada —el lead-in— ronda los 80 a 150 milisegundos, lo justo para que el ojo
-encuentre el texto antes de la voz —las pasadas automáticas parten del tramo alto de ese
-rango—, y puede ampliarse hasta unos 400 cuando la entrada es suave o el texto denso. El aire de salida —el lead-out— es mayor, de unos 350 a 420
-milisegundos, porque la lectura termina después del habla, y se estira hasta unos 800 en
-cierres lentos o frases exigentes. Esa diferencia entre los dos bordes nace del desfase
-entre el fin de la voz y el fin de la lectura.
-
-La distancia entre líneas tiene su propio rango. Un hueco de unos 80 milisegundos cae en
-zona de parpadeo y pide decidir entre encadenar o conservar la pausa. Un hueco de más de un
-segundo largo, hacia los 1200 milisegundos, es una pausa que pide confirmar su intención. Y
-un borde ya colocado resiste los microajustes dentro de unos 250 milisegundos, para que un
-keyframe casi encima no arrastre un límite que ya estaba bien.
-
-<div class="tg-zone">
-<div class="band">
-<span class="z flicker" style="flex:0 0 18%">parpadeo</span>
-<span class="z pause" style="flex:1">pausa útil</span>
-<span class="z check" style="flex:0 0 26%">confirmar intención</span>
+<form class="tg-calculator" data-tg-cps>
+<label for="cps-text">Subtitle text</label>
+<textarea id="cps-text" rows="2">Run, we have to go!</textarea>
+<div class="tg-calculator-fields">
+<div><label for="cps-duration">Duration (seconds)</label><input id="cps-duration" type="number" min="0.01" step="any" value="0.5" inputmode="decimal" aria-describedby="cps-error"></div>
+<div><label for="cps-count">Count</label><select id="cps-count"><option value="all">Include spaces and punctuation</option><option value="letters">Letters and numbers only</option></select></div>
 </div>
-<div class="ticks"><span style="left:1%">0</span><span style="left:18%">80 ms</span><span style="left:74%">1200 ms</span></div>
-</div>
+<output for="cps-text cps-duration cps-count" aria-live="polite"><strong data-cps-result>38.0 CPS</strong><span data-cps-detail>19 characters ÷ 0.50 seconds</span></output>
+<p id="cps-error" class="tg-field-error" hidden>Enter a duration greater than zero.</p>
+<p class="tg-calculator-note">Use the same count when comparing durations, then read the cue in playback.</p>
+<noscript><p>The static example above is 19 ÷ 0.5 = 38 CPS. Enable JavaScript to recalculate after editing.</p></noscript>
+</form>
 
-## Por qué se piensa en fotogramas
+## Suggested review thresholds {#suggested-review-thresholds}
 
-El snap es una decisión visual, y lo visual ocurre en fotogramas. Un mismo valor en
-milisegundos pesa distinto según el framerate: a 24 fotogramas por segundo cada cuadro dura
-unos 42 milisegundos, y dos rondan los 83; a 25 fotogramas, cada cuadro son 40 milisegundos
-exactos, y dos, 80; a 30, cada cuadro baja a unos 33. Por eso la ventana de snap se piensa
-en cuadros y se expresa en cuadros: «dos fotogramas» se mantiene estable mientras «80
-milisegundos» cambia de significado con el material.
-
-| Framerate | Un cuadro | Dos cuadros |
+| Measure | Review point | What to check |
 | --- | --- | --- |
-| 24 fps | ≈42 ms | ≈83 ms |
+| Reading speed | Above 20 or below 7 CPS, keeping the count consistent. | Reading load or an unnecessarily long hold. |
+| Short duration | About 700–833 ms. | Whether the cue flashes past before it can be read. |
+| Long duration | About 5500 ms or more. | Whether the sentence needs all that time. |
+| Line length | More than 42 characters per displayed line. | Actual width, syntax, and possible splitting. |
+| Layout | More than two displayed lines. | Whether to condense or segment the text. |
+| Short gap | Around 80 ms. | Flicker, expressive pause, and room to chain. |
+| Long gap | Around 1200 ms or more. | A real pause or misplaced timing. |
+
+These are the working references used in this guide; justified exceptions are possible. Chrono's full audit preset uses a 500 ms minimum, a 7000 ms maximum, and 300 ms for short gaps. Auto Timing has its own 28 CPS flag. Check the settings in your installed version before interpreting a clean report.
+
+## Compare what the adjustment changes {#apply-the-delivery-specification}
+
+Extending a cue lowers its CPS, but also keeps it over more of the scene. Check what occupies that extra time: the same thought, a useful pause, another speaker, or a new action. If the hold makes the exchange harder to follow, revisit the wording or divide the sentence at a meaningful point.
+
+Repeated playback can hide a reading problem because the sentence is already familiar. Watch the passage from a few cues earlier, with the picture and original mix, and check whether the text leaves time to follow the action. A compact reply and an unfamiliar name can demand different attention at the same CPS.
+
+Auto Timing's CPS warning uses a narrower punctuation filter than **Count CPS** and the audit. For example, curly quotation marks can remain in Auto Timing's count. The calculator above offers two simple counts for comparison; its “letters and numbers” option does not reproduce every detail of either macro.
+
+## Padding and scene changes
+
+For manual work, this guide suggests lead-ins around 80–150 ms and lead-outs around 350–420 ms as starting points for review. Auto Timing starts at 120 and 420 ms, with maxima of 400 and 800 ms. Those maxima guide the chaining adjustments. Snapping, short-gap handling, and the minimum-duration target have additional rules, described in the [algorithm notes](../algoritmos/index.md#chronos-final-pass). Inspect the resulting edges after a pass.
+
+The `edge_snap_protect_ms` setting defaults to 250 ms in Chrono's directional snapping tools. It limits search distance. Its name does not mean the tool can recognize and protect an already correct boundary.
+
+## Frames and milliseconds
+
+For constant frame rate video, one frame lasts `1000 / fps` milliseconds.
+
+| Frame rate | One frame | Two frames |
+| --- | ---: | ---: |
+| 24000/1001 fps (≈23.976) | ≈41.71 ms | ≈83.42 ms |
+| 24 fps | ≈41.67 ms | ≈83.33 ms |
 | 25 fps | 40 ms | 80 ms |
-| 30 fps | ≈33 ms | ≈67 ms |
+| 30 fps | ≈33.33 ms | ≈66.67 ms |
 
-## Del criterio a la marca
+For variable frame rate video, use the actual timecodes. Dividing a frame number by an average frame rate does not reliably give that frame's time.
 
-Estos rangos viven dos veces. Aquí son criterio: el porqué de que una velocidad alta o una
-duración corta merezcan revisión. En la [auditoría](../tecnica/auditoria.md) son umbral:
-el número concreto que dispara una marca cuando una línea se sale. Los valores por defecto
-de la auditoría parten de estos criterios, y se ajustan por proyecto cuando una escena o una
-norma piden otra cosa.
+## Change a tolerance deliberately
 
-Cambiar un umbral pide pensarlo. Antes conviene saber qué problema resuelve el cambio,
-cuántos casos mejora de verdad, qué marcas falsas introduce, si aplica a toda la obra o solo
-a una escena, y si conserva el orden de prioridad entre lectura, voz, escena y continuidad.
-Un umbral que mejora una escena a costa de ensuciar el resto del episodio sale caro, y la
-norma del proyecto, cuando define rangos más estrictos, manda sobre estos valores de
-partida.
+Try a new value on one representative scene. Increasing **SHORT-GAP** marks more positive gaps; decreasing it marks fewer. Increasing **FAST-CPS** marks fewer fast cues. Check this direction before trying to reduce the number of warnings.
+
+The [audit](../tecnica/auditoria.md) collects those warnings. After resolving them, watch the scene at normal speed.

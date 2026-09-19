@@ -3,54 +3,42 @@ hide:
   - toc
 ---
 
-# Referencias
+# References
 
-El método se apoya en documentación de herramientas, normas de la industria y trabajo
-académico. Las fuentes se agrupan por lo que aportan.
+Documentation for the tools and analysis methods used throughout the guide. The proposed working ranges are identified separately in [reading speed and timing limits](fundamentos/criterios.md).
 
-## Herramientas y formato
+## Timing tools
 
-La documentación de [Aegisub sobre timing contra audio](https://aegisub.org/docs/latest/timing/)
-explica los marcadores de audio, el espectro y los atajos sobre los que se apoya el pegado
-manual, y la de [trabajo con video](https://aegisub.org/docs/latest/video/) cubre la carga y
-el uso de keyframes. Las guías de timing de Unanimated —[Basics of Timing in
-Aegisub](https://unanimated.github.io/timing-basics.htm), [Timing in Aegisub Without Using
-TPP](https://unanimated.github.io/timing-without-tpp.htm) y [Timing: Additional
-Notes](https://unanimated.github.io/timing-notes.htm)— desarrollan rough timing,
-post-timing, line linking, keyframe snapping y revisión fina. La especificación [WebVTT del
-W3C](https://www.w3.org/TR/webvtt1/) define la idea de *cue* como texto asociado a un
-intervalo temporal, base del modelo de línea. La familia histórica usada por Legacy se
-puede consultar en [Lazytimer Pocket-sized](https://github.com/Kiterowx/lazytimer-pocket-sized), y el
-editor web de pegado sobre la onda comprimida, en
-[SubWave](https://github.com/Kiterowx/SubWave-Editor).
+- [Aegisub audio timing](https://aegisub.org/docs/latest/timing/): marking and listening to intervals.
+- [Aegisub video documentation](https://aegisub.org/docs/latest/video/): video, external keyframes, and timecodes.
+- [Chrono Suite documentation](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md) and [kite.Timing source](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/Modules/kite/Timing.lua): controls and implementation.
+- [Chrono Generators](https://github.com/Kiterowx/Chrono-Generators-Scripts): installation, code, and analysis formats.
+- [SCXvid standalone releases](https://github.com/soyokaze/SCXvid-standalone/releases): the console executable used by the keyframe generator.
+- [Lazytimer Pocket-sized](https://github.com/Kiterowx/lazytimer-pocket-sized): the method behind Legacy.
+- [SubWave](https://github.com/Kiterowx/SubWave-Editor): waveform-based subtitle editing.
+- Unanimated's [timing basics](https://unanimated.github.io/timing-basics.htm), [timing without TPP](https://unanimated.github.io/timing-without-tpp.htm), and [additional timing notes](https://unanimated.github.io/timing-notes.htm).
 
-## Normas de lectura
+## Audio extraction and vocal separation
 
-Las guías de estilo de Netflix fijan referencias de la industria que esta metodología toma
-como punto de partida: los [requisitos generales](https://partnerhelp.netflixstudios.com/hc/en-us/articles/215758617-Timed-Text-Style-Guide-General-Requirements)
-establecen duración mínima y máxima y el límite de dos líneas, y la
-[guía de inglés (EE. UU.)](https://partnerhelp.netflixstudios.com/hc/en-us/articles/217350977-English-USA-Timed-Text-Style-Guide)
-concreta el límite de 42 caracteres por línea y la velocidad de lectura.
+- [FFmpeg stream selection](https://ffmpeg.org/ffmpeg.html#Stream-selection): choosing an audio track with `-map`.
+- [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui): desktop application and installer requirements.
+- [Demucs](https://github.com/facebookresearch/demucs): command-line separation, vocals output, and the limits of two-stem mode. The archived original repository points to its author's fork.
+- [Audio Separator](https://github.com/nomadkaraoke/python-audio-separator): installation, model catalog, and selection.
 
-## Medición de señales
+## Measurements
 
-El filtro [silencedetect de FFmpeg](https://ffmpeg.org/ffmpeg-filters.html#silencedetect)
-documenta el umbral y la duración mínima con que se detectan los silencios. Las funciones de
-librosa para [fuerza de onset](https://librosa.org/doc/latest/generated/librosa.onset.onset_strength.html)
-y [detección de onset](https://librosa.org/doc/latest/generated/librosa.onset.onset_detect.html)
-describen el flux espectral y la detección de picos sobre la envolvente de ataques.
+- [Silero VAD](https://github.com/snakers4/silero-vad): voice activity detection.
+- FFmpeg's [silencedetect](https://ffmpeg.org/ffmpeg-filters.html#silencedetect) and [astats](https://ffmpeg.org/ffmpeg-filters.html#astats): silence intervals and RMS measurements.
+- librosa's [onset_strength](https://librosa.org/doc/latest/generated/librosa.onset.onset_strength.html) and [onset_detect](https://librosa.org/doc/latest/generated/librosa.onset.onset_detect.html): onset envelopes and detected peaks.
 
-## Investigación
+## Subtitle formats {#delivery-specifications}
 
-Tres trabajos sostienen las decisiones de fondo. [SubER (arXiv:2205.05805)](https://arxiv.org/abs/2205.05805)
-evalúa texto, segmentación y timing de subtítulos de forma conjunta.
-[«¿Es 42 la respuesta?» (arXiv:2006.01080)](https://arxiv.org/abs/2006.01080) estudia el
-audio, la duración y las pausas como restricciones del *spotting*. Y
-[«Window Size Versus Accuracy Experiments in Voice Activity Detectors» (arXiv:2601.17270)](https://arxiv.org/abs/2601.17270)
-trata la detección de voz como un algoritmo que depende de la ventana y del modelo, lo que
-justifica revisar sus candidatos con las demás señales.
+The [WebVTT specification](https://www.w3.org/TR/webvtt1/) describes how that format represents timed cues. Use it when inspecting a VTT file or a conversion. ASS has its own styling and event structure; check which features survive when moving between formats.
 
-## Sobre los valores
+## Related research
 
-Las cifras de velocidad de lectura, duración, gaps y snap son puntos de revisión. La norma
-de cada proyecto prevalece cuando define rangos más estrictos.
+- [SubER: A Metric for Automatic Evaluation of Subtitle Quality](https://arxiv.org/abs/2205.05805): evaluating text, segmentation, and timing together.
+- [Is 42 the Answer to Everything in Subtitling-oriented Speech Translation?](https://arxiv.org/abs/2006.01080): subtitle constraints in speech translation.
+- [Window Size Versus Accuracy Experiments in Voice Activity Detectors](https://arxiv.org/abs/2601.17270): the effect of analysis windows on VAD performance.
+
+These papers provide evaluation context. They do not validate Busy's weights or the particular thresholds in Chrono Suite.

@@ -1,108 +1,105 @@
-# Glosario
+# Glossary
 
-El vocabulario práctico del timing, agrupado por el plano al que pertenece.
+A **cue** is one timed subtitle event; a **line** is one displayed row of text. Aegisub also calls its event rows “lines,” so the tool descriptions sometimes use that label.
 
-## Línea y borde
+## Cues and boundaries
 
-Línea
-: Texto visible durante un intervalo. También se le llama *cue*.
+Start / end
+: The moments when a cue appears and disappears.
 
-Inicio
-: Borde donde la línea aparece.
-
-Final
-: Borde donde la línea desaparece.
-
-Duración
-: Tiempo visible entre el inicio y el final.
+Duration
+: The time between its start and end.
 
 Gap
-: Espacio entre el final de una línea y el inicio de la siguiente.
+: Empty time between one cue's end and the next cue's start.
 
 Overlap
-: Dos líneas visibles al mismo tiempo; legítimo en diálogo simultáneo.
+: Two cues visible at once. This can be intentional for simultaneous dialogue.
 
-Vecindad
-: Las líneas anterior y siguiente, cuya relación con la actual condiciona su permanencia.
+Neighboring cues
+: The preceding and following cues whose timing limits an adjustment.
 
-## Proceso
+## Workflow
 
 Raw timing
-: Pegado de los dos bordes a la actividad de voz como intervalo desnudo previo a márgenes y ajustes. También *timing primario* o *pegado*.
+: Placing both edges against the speech before adding padding or scene adjustments.
 
 Post-timing
-: Adición de márgenes, snap y cadena sobre el intervalo de voz.
+: Adding padding, snapping to cuts, and chaining neighboring cues.
 
 Proofwatch
-: Revisión final del episodio como espectador, de principio a fin.
+: Watching the completed episode from start to finish as a viewer would.
 
 Retiming
-: Reajuste de tiempos ya existentes, propios o heredados.
+: Adjusting timing that already exists.
 
-Segmentación
-: División del texto en unidades de línea con sentido, voz y carga propios.
+Segmentation
+: Dividing dialogue into cues with coherent meaning, speech, and reading load.
 
-## Ajustes de borde
+## Boundary adjustments
 
 Lead-in
-: Aire de entrada, antes de la voz, para que el ojo encuentre el texto.
+: Padding before the voice starts, giving the eye time to find the text.
 
-Lead-out
-: Aire de salida, después de la voz, para que la lectura termine. También *hold*.
+Lead-out / hold
+: Time after the voice ends, allowing the reader to finish.
 
 Snap
-: Alineación de un borde con un keyframe de escena cercano.
+: Moving a boundary to a nearby scene keyframe.
 
 Chain
-: Cierre de un gap entre dos líneas para corregir un parpadeo.
+: Closing the gap between consecutive cues.
 
-Protección de borde
-: Resistencia de un límite ya correcto a moverse por un microajuste.
+Edge protection
+: A setting name to read carefully. In Chrono's directional tools, `edge_snap_protect_ms` limits search distance; it does not judge whether an edge is correct.
 
-## Síntomas
+## Symptoms
 
 Bleed
-: Final que invade una toma ajena a la línea.
+: Text lingering over a shot it no longer belongs to.
 
 Overstay
-: Permanencia excesiva tras cerrar la voz y la lectura.
+: A cue remaining after both the speech and the reading have finished.
 
 Flicker
-: Parpadeo producido por un gap demasiado corto.
+: A distracting flash of empty screen between cues.
 
 Overtime
-: Audio que termina por encima del límite de permanencia.
+: A duration above the chosen review threshold.
 
-## Señales
+## Audio and analysis files
+
+Vocals / vocal stem
+: Voice separated from a full mix. It may contain several speakers, singing, and residual noise. It must remain synchronized with the video.
 
 VAD
-: Detección de actividad de voz; marca regiones de habla probable.
+: Voice activity detection: regions likely to contain speech.
 
 Flux
-: Medida del cambio de energía espectral; delata ataques y consonantes.
+: A measure of spectral change, useful for finding attacks. VADFlux exports onset times rather than speech-end events.
 
 Envelope
-: Contorno de energía RMS; dibuja el ataque, el cuerpo y la cola de una frase.
+: An amplitude or energy contour. The generators' envelope TSV uses RMS; the waveform JSON supplies min/max peaks.
 
-Mapa espectral
-: Presencia de voz por bandas de frecuencia, para los tramos ambiguos.
+Spectral features
+: Measurements of energy and texture across frequency bands. They help inspect ambiguous passages but do not identify a speaker.
 
-Onda comprimida
-: Forma de onda en niveles de resolución, para ver y para detectar.
+Waveform JSON
+: A min/max waveform stored at several resolutions for display and detection.
 
 Keyframe
-: Fotograma que marca un cambio de escena.
+: A key frame in encoded video, or an external marker used as a candidate scene cut. Verify it against the picture before snapping.
 
-## Lectura y escena
+## Reading and picture
 
 CPS
-: Caracteres por segundo; detector de carga de lectura que avisa dónde mirar.
+: Characters per second. The counting convention must be stated before comparing values.
 
 Rebreak
-: Cambio del punto donde el texto salta de renglón.
+: Moving a displayed line break without necessarily changing cue timing.
 
 Frame timing
-: Ajuste por fotogramas, propio de los elementos visuales.
+: Placing boundaries by video frames, particularly for signs and other visual elements.
 
-Pausa dramática
-: Silencio que sostiene una intención narrativa y conviene preservar.
+Dramatic pause
+: A silence with a narrative purpose that may need to remain visible as a gap.

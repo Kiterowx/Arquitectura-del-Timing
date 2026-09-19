@@ -1,182 +1,84 @@
-# Post-timing: márgenes, snap y chain
+# Post-timing: padding, snapping, and chaining
 
-El post-timing parte del intervalo desnudo de voz y le añade lo que la voz no contiene:
-el aire de lectura, la alineación con la escena y la continuidad con las líneas vecinas.
-Tres operaciones lo consiguen. Los márgenes convierten el intervalo de voz en intervalo
-visible. El snap alinea un borde con un corte de escena cercano. La cadena cierra los
-huecos que parpadean. Las tres trabajan sobre el mismo intervalo y se ordenan por la
-jerarquía de revisión que cierra esta página.
+Once the speech boundaries are right, add reading time and check how each cue meets the picture and its neighbors. Lead-in and lead-out provide that extra time. Snapping aligns an edge with a nearby cut. Chaining closes a distracting gap.
 
 <figure class="tg-fig tg-strip">
-<span class="tg-eyebrow">Del intervalo de voz al intervalo visible</span>
+<span class="tg-eyebrow">From speech to screen time</span>
 <div class="lane">
 <span class="seg aire" style="left:8%;width:6%"><i>in</i></span>
-<span class="seg voz" style="left:14%;width:44%">voz · «No lo sé todavía.»</span>
+<span class="seg voz" style="left:14%;width:44%">speech</span>
 <span class="seg aire" style="left:58%;width:14%"><i>out</i></span>
-<span class="cont" style="left:78%;width:16%">vecina</span>
+<span class="cont" style="left:78%;width:16%">next cue</span>
 </div>
-<div class="tg-keys">
-<b class="k-aire">lead-in: aire de entrada, antes de la voz</b>
-<b class="k-voz">voz: el intervalo pegado al habla</b>
-<b class="k-aire">lead-out: aire de salida, mayor que el de entrada</b>
-<b class="k-continuidad">la cadena cierra el hueco que parpadea</b>
-</div>
-<span class="cap">Los márgenes convierten el intervalo de voz en intervalo visible; el <b>lead-out</b> base supera al <b>lead-in</b> porque la lectura termina después del habla. La cadena cierra el hueco con la vecina cuando es demasiado corto para leerse como pausa.</span>
+<div class="tg-keys"><b class="k-aire">padding</b><b class="k-voz">speech interval</b><b class="k-continuidad">neighboring cue</b></div>
+<figcaption>The cue appears before the voice and stays briefly after it. The next cue limits how far that hold can extend.</figcaption>
 </figure>
 
-## Valores de partida
+## Starting values
 
-Una primera aplicación estable parte de unos valores conocidos, que la revisión luego
-aprieta o afloja según la escena. El aire de entrada arranca en 120 milisegundos y puede
-crecer hasta 400; el de salida, en 420 y hasta 800. El snap busca un keyframe hasta 400
-milisegundos del inicio y hasta 800 del final, con 100 de margen para entrar antes del
-corte. Ninguna línea baja de 500 milisegundos de permanencia, y la lectura por encima de
-28 caracteres por segundo queda señalada para revisar. Son puntos de partida, y son
-límites de trabajo holgados: el suelo de 500 milisegundos y la señal de 28 caracteres por
-segundo cazan solo los casos claros, mientras que la comodidad de lectura se revisa con
-los rangos más ceñidos de los [criterios cuantitativos](criterios.md). Cada borde se
-confirma comprobando que conserva la lectura, la escena y la continuidad.
+These are Auto Timing's initial settings. Try them on a short scene and inspect the entries, holds, and gaps before extending the pass to the episode. A useful setting for measured dialogue can leave too little room in a rapid exchange.
 
-## Recorrer de la última línea a la primera
+| Setting | Default | What it controls |
+| --- | ---: | --- |
+| Lead-in / maximum | 120 / 400 ms | Base entry padding / allowance used in chaining. |
+| Lead-out / maximum | 420 / 800 ms | Base exit padding / allowance used in chaining. |
+| Start / end keyframe window | 400 / 800 ms | How far each edge searches for a cut. |
+| Voice-cut limit | 100 ms | Tolerance for a snap after speech starts or before it ends. |
+| Minimum duration target | 500 ms | A target the surrounding constraints may prevent. |
+| Reading-speed flag | Above 28 CPS | A prompt to review the text and duration. |
 
-El post-timing a mano decide cada borde desde cero —cuánto aire, qué corte, qué hueco—, y
-conviene aplicarlo en orden inverso: de la última línea de la escena hacia la primera. La
-razón está en la dependencia entre vecinas. El margen de salida de una línea depende de dónde
-empiece la siguiente: hasta fijar el inicio de la línea *n+1* no se sabe cuánto puede
-extenderse el final de la *n* sin invadirla, ni cuánto hueco queda para encadenar. Resuelta
-antes la línea posterior, cada final anterior se decide mirando un borde ya estable en lugar
-de uno que todavía se moverá, y el margen de salida se fija una sola vez.
+The [reading criteria](criterios.md) use tighter review thresholds. A cue can pass these broad defaults and still feel rushed.
+
+## Work backward through the scene
+
+For manual adjustments, start with the last cue. Its settled start then limits how far the previous cue can extend without overlapping it. Working back from there avoids repeatedly changing a hold because its neighbor has moved.
 
 <figure class="tg-fig tg-strip">
-<span class="tg-eyebrow">El final de n depende del inicio de n+1</span>
-<div class="lane">
-<span class="seg voz" style="left:4%;width:24%">línea n−1</span>
-<span class="seg aire" style="left:28%;width:10%"><i>out</i></span>
-<i class="ord" style="left:95%">3</i>
-</div>
-<div class="lane">
-<span class="seg voz" style="left:34%;width:24%">línea n</span>
-<span class="seg aire" style="left:58%;width:10%"><i>out</i></span>
-<i class="ord" style="left:95%">2</i>
-</div>
-<div class="lane">
-<span class="cont" style="left:64%;width:26%">línea n+1</span>
-<i class="ord" style="left:95%">1</i>
-</div>
-<span class="cap">El recorrido a mano va de abajo hacia arriba: fijado primero el inicio de la <b>línea n+1</b> (①), el margen de salida de la <b>línea n</b> (②) se extiende hasta tocarlo sin invadirlo, y así hasta la primera línea de la escena.</span>
+<span class="tg-eyebrow">The next start limits the current end</span>
+<div class="lane"><span class="seg voz" style="left:4%;width:24%">cue n−1</span><span class="seg aire" style="left:28%;width:10%"><i>out</i></span><i class="ord" style="left:95%">3</i></div>
+<div class="lane"><span class="seg voz" style="left:34%;width:24%">cue n</span><span class="seg aire" style="left:58%;width:10%"><i>out</i></span><i class="ord" style="left:95%">2</i></div>
+<div class="lane"><span class="cont" style="left:64%;width:26%">cue n+1</span><i class="ord" style="left:95%">1</i></div>
+<figcaption>Review order: bottom to top. Each earlier end is checked against an already settled start.</figcaption>
 </figure>
 
-## Los márgenes dan el aire
+## Add padding where it helps reading
 
-El margen es lo que transforma el intervalo de voz en intervalo visible. El lead-in
-coloca el inicio visible un poco antes de la voz, para que el ojo encuentre el texto a
-tiempo; el lead-out conserva la línea un poco después del cierre vocal, para que la
-lectura termine. El lead-out base supera al lead-in porque la lectura termina después del
-habla, siempre por detrás de la voz. Los máximos marcan cuánto puede crecer ese aire
-cuando un snap, un hueco corto o un ritmo visual lo justifican; más allá de ellos, el aire
-deja de ayudar y empieza a sentirse como texto muerto.
+Lead-in gives the eye time to find the subtitle before the first syllable. Lead-out lets the reader finish after the voice stops. The exit usually needs more padding than the entry, but a short reaction and a sentence full of unfamiliar names need different holds.
 
-![El aire de entrada y de salida alrededor de la silueta de la voz](../assets/ejemplos/margenes-silueta.png){ loading=lazy }
+The maximum settings guide how far chaining can extend the base margins. Other steps can exceed them, including short-gap handling and the minimum-duration target. Check the resulting hold: text can linger over silence or over a shot it no longer belongs to.
 
-## El snap alinea con la escena
+![Lead-in and lead-out around the speech waveform; original Spanish labels](../assets/ejemplos/margenes-silueta.png){ loading=lazy }
 
-El snap mueve un borde visible hacia un keyframe cercano, partiendo del intervalo ya
-ampliado por los márgenes. Se rige por reglas claras. El keyframe debe caer dentro de la
-ventana de snap del borde. El movimiento debe caber dentro del margen máximo permitido.
+## Snap an edge to a useful cut
 
-<figure class="tg-fig tg-strip">
-<span class="tg-eyebrow">La ventana de snap de cada borde</span>
-<div class="lane">
-<span class="win" style="left:4%;width:15%"></span>
-<span class="win" style="left:56%;width:32%"></span>
-<span class="seg aire" style="left:8%;width:6%"><i>in</i></span>
-<span class="seg voz" style="left:14%;width:44%">voz</span>
-<span class="seg aire" style="left:58%;width:10%"><i>out</i></span>
-<i class="kf" style="left:76%"></i>
-<i class="kf" style="left:95%"></i>
-</div>
-<div class="scale"><span class="e" style="left:76%">salta</span><span class="v" style="left:95%">queda lejos</span></div>
-<div class="tg-keys">
-<b class="k-escena">ventana de snap: 400 ms en el inicio, 800 en el final</b>
-<b class="k-aire">el aire base del que parte el borde</b>
-</div>
-<span class="cap">Solo el keyframe que cae <b>dentro de la ventana</b> atrae el borde; el corte fuera de alcance deja el final donde los márgenes lo dejaron. La ventana del final dobla a la del inicio porque la escena pesa más en los cierres.</span>
-</figure>
-La ventana del final es mayor que la del inicio, porque la escena y la continuidad pesan
-más en los cierres que en las entradas. El snap puede incluso reducir un lead-out si el
-corte cierra mejor que el aire base. Y la cobertura del habla subtitulada conserva la
-prioridad: una excepción perceptiva mínima queda para los casos avanzados y se decide línea a línea.
+Check the image before choosing a keyframe: an encoded keyframe does not necessarily mark a shot change. Auto Timing searches within its configured windows and can also shorten speech coverage within **Voice-cut limit**. Listen to any edge moved inward; the setting measures milliseconds and cannot tell a fading tail from a distinct syllable.
 
-El caso más frecuente es un final cerca de un corte. Cuando la voz termina poco antes de
-un keyframe, el final visible puede cerrarse en ese keyframe aunque quede por debajo del
-lead-out base, porque un cierre sobre el corte suele ser más estable que dejar texto
-muerto en la toma siguiente. Cuando la voz termina justo sobre el keyframe, el final
-puede coincidir con el corte si la última sílaba queda cubierta. Y cuando la voz termina
-apenas después del keyframe —en un margen del orden de 150 ms—, el final todavía puede
-cerrar en el corte si el tramo posterior es perceptivamente mínimo, la lectura ya alcanza
-y el resultado controla el desbordamiento hacia la toma siguiente. Esa concesión tiene un
-límite: si el tramo que queda tras el corte contiene una palabra completa o información
-nueva, el final conserva la voz y renuncia al corte.
+If speech ends shortly before a cut, the subtitle can end on that cut, even when the resulting hold is shorter than the base lead-out. This works only if the cue has enough reading time. Speech that continues across the cut normally stays covered. A fading vocal tail may allow a small exception; a new word does not.
 
 <figure class="tg-fig">
-<span class="tg-eyebrow">Final en keyframe frente a final pasado</span>
+<span class="tg-eyebrow">Compare the same scene</span>
 <div class="tg-compare tg-video-stack" data-tg-wipe>
-<div class="col">
-<h4>Correcto: final en keyframe</h4>
-<video src="../../assets/ejemplos/kf-end.mp4" controls loop playsinline preload="metadata"></video>
-<p class="note">El subtítulo termina en el corte de escena; la salida queda limpia y el texto permanece en la toma que lo contiene.</p>
+<div class="col"><h4>Ends on the cut</h4><video src="../../assets/ejemplos/kf-end.mp4" controls loop playsinline preload="metadata"></video><p class="note">“¡Una sopa de soba!” (“One soba soup!”) clears as the wider restaurant shot changes to the man’s close-up.</p></div>
+<div class="col"><h4>Runs past the cut</h4><video src="../../assets/ejemplos/no-kf-end.mp4" controls loop playsinline preload="metadata"></video><p class="note">The same subtitle remains over the next shot. Check whether that extra hold still serves the dialogue.</p></div>
 </div>
-<div class="col">
-<h4>Incorrecto: final pasado del keyframe</h4>
-<video src="../../assets/ejemplos/no-kf-end.mp4" controls loop playsinline preload="metadata"></video>
-<p class="note">El final cruza el corte; el texto permanece sobre la toma siguiente y el cambio de escena se siente arrastrado.</p>
-</div>
-</div>
-<span class="cap">La misma escena compara el cierre correcto en el keyframe con el final pasado del corte.</span>
+<figcaption>Play the comparison, then drag the divider to inspect either version.</figcaption>
 </figure>
 
-## La cadena cierra los huecos
+## Chain cues when the gap flickers
 
-La cadena elimina los huecos visibles entre líneas consecutivas, y existe sobre todo para
-corregir parpadeos y huecos de lectura. Se aplica cuando el hueco es demasiado corto para
-percibirse como pausa útil, cuando la salida de una línea y la entrada de la siguiente
-caben dentro de los márgenes máximos, cuando el resultado conserva una permanencia
-razonable y cuando no introduce un solape accidental.
+A very short blank interval can look like a flash between two subtitles. Close it when the cues read naturally in sequence, the allowed padding covers the move, and the result creates no accidental overlap.
 
-Y se conserva el hueco —no se encadena— cuando la pausa tiene función expresiva, cuando
-el hueco es lo bastante largo para leerse como descanso, cuando encadenar alargaría de
-más la línea anterior, o cuando la escena cambia de un modo que pide separación. La
-decisión, en el fondo, es siempre la misma: se cierra el hueco que distrae y se preserva
-el que comunica.
+Keep a gap when it carries a hesitation, separates ideas or speakers, or gives the viewer a useful rest. A chain that leaves the first subtitle lingering through a long silence has solved the wrong problem.
 
 <figure class="tg-fig">
-<span class="tg-eyebrow">El hueco que parpadea</span>
+<span class="tg-eyebrow">Watch the handoff between cues</span>
 <div class="tg-compare tg-video-stack" data-tg-wipe>
-<div class="col">
-<h4>Con hueco</h4>
-<video src="../../assets/ejemplos/con-gaps.mp4" controls loop playsinline preload="metadata"></video>
-<p class="note">Un hueco demasiado corto entre dos líneas se percibe como un parpadeo que distrae.</p>
+<div class="col"><h4>Short gap</h4><video src="../../assets/ejemplos/con-gaps.mp4" controls loop playsinline preload="metadata"></video><p class="note">The Spanish cues read “Sí.” → “Lo sabía.” → “Nadie recuerda a mi hermano.” (“Yeah.” → “I knew it.” → “No one remembers my brother.”). Watch the brief blank intervals within this connected thought.</p></div>
+<div class="col"><h4>Chained</h4><video src="../../assets/ejemplos/sin-gaps.mp4" controls loop playsinline preload="metadata"></video><p class="note">The next cue replaces the previous one directly. Compare the rhythm with the spoken pause.</p></div>
 </div>
-<div class="col">
-<h4>Encadenado</h4>
-<video src="../../assets/ejemplos/sin-gaps.mp4" controls loop playsinline preload="metadata"></video>
-<p class="note">La cadena lleva el hueco a cero y el paso entre líneas deja de distraer.</p>
-</div>
-</div>
-<span class="cap">Se cierra el hueco que distrae; el que comunica una pausa real se conserva.</span>
+<figcaption>A gap is worth closing when it distracts more than it communicates.</figcaption>
 </figure>
 
-## El orden de la revisión
+## Review competing adjustments
 
-Cuando las tres operaciones compiten sobre una misma línea, se aplican en este orden:
-
-1. Lectura suficiente.
-2. Habla subtitulada cubierta, o excepción perceptiva mínima.
-3. Cierre visual en un keyframe cercano.
-4. Continuidad con las líneas consecutivas.
-5. Duración mínima, permanencia excesiva y solape.
-6. Segmentación, cuando el tiempo resulte insuficiente por más que se ajuste.
-
-Este orden hereda la jerarquía general: primero que se lea, después que la voz esté
-completa, luego la escena, la continuidad y los límites técnicos, y al final —cuando
-ningún ajuste de borde basta— la decisión de volver atrás y resegmentar.
+Check reading time first, then speech coverage, the picture, and continuity with neighboring cues. Follow with duration and overlap checks. If no edge adjustment can make the text readable, return to [segmentation](segmentacion.md) or revise the wording. Reproduce the full exchange after the change: gaining time for one cue can displace the problem onto its neighbor.

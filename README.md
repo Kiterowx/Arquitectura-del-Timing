@@ -1,35 +1,40 @@
-# Guía de Timing de Subtítulos
+# Subtitle Timing Guide
 
-Sitio MkDocs Material sobre timing de subtítulos: criterio de decisión de bordes y
-fase técnica con la suite Chrono Suite y los generadores de señales.
+A guide to subtitle timing: locate the speech, adjust reading time, align with scene cuts, and manage transitions between cues. It includes worked examples and a workflow with Aegisub, Chrono Suite, and Chrono Generators.
 
-Este repositorio contiene solo la documentación. Las herramientas que describe
-—[Chrono Suite](https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/docs/ChronoSuite.md),
-el módulo de cronometraje y [Chrono Generators](https://github.com/Kiterowx/Chrono-Generators-Scripts)—
-se distribuyen aparte e instalan en el editor y junto al material de trabajo.
+**[Read the guide](https://kiterowx.github.io/Arquitectura-del-Timing/)**
 
-## Estructura
+## Find your starting point
 
-```text
-repo/
-├── mkdocs.yml
-├── requirements.txt
-├── docs/
-│   ├── index.md
-│   ├── fundamentos/
-│   ├── tecnica/
-│   ├── referencias.md
-│   ├── stylesheets/extra.css
-│   └── assets/
-│       ├── ejemplos/
-│       └── post-images/
+- [Timing fundamentals](docs/fundamentos/index.md): segmentation, speech, reading, and scene changes.
+- [Prepare a vocal track](docs/tecnica/vocales.md): extract audio and separate vocals with UVR, Demucs, or Audio Separator.
+- [Signal generators](docs/tecnica/generadores.md): requirements, inputs, outputs, and file formats.
+- [Auto Timing](docs/tecnica/motor.md): load the right files for Lazy, Busy, or Legacy.
+- [An episode from start to finish](docs/tecnica/flujo.md): preparation through final playback.
+- [How the algorithms work](docs/algoritmos/index.md): calculations and limits.
+
+This repository contains the guide. The tools are maintained separately in [Kite Aegisub Scripts](https://github.com/Kiterowx/Kite-Aegisub-Scripts) and [Chrono Generators](https://github.com/Kiterowx/Chrono-Generators-Scripts).
+
+## Build the site
+
+To edit and preview the guide, use Python 3.11 and the packages in [requirements.txt](requirements.txt). From this folder in PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m mkdocs serve
 ```
 
-## Herramientas que documenta
+Open the local address printed by MkDocs. To build the site with strict checks:
 
-- **Aegisub** con la suite **Chrono Suite** para editar, cronometrar y auditar.
-- **[FFmpeg y FFprobe](https://ffmpeg.org/download.html)** en el PATH, para audio, silencios y energía RMS.
-- **SCXvid** para los keyframes de escena.
-- **vadflux.exe** para la detección de voz y el flux. Se construye con `Build VADFlux.bat` dentro de la carpeta de generadores.
-- **Python** con NumPy para `Features Espectrales.bat`, `Waveform JSON.bat` y `Procesar Todo.bat`; para compilar `vadflux.exe` también hacen falta PyInstaller, torch, torchaudio, librosa, soundfile y numba.
-- **[UVR](https://github.com/Anjok07/ultimatevocalremovergui)** (Ultimate Vocal Remover) para separar la voz en una pista propia antes de generar señales de diálogo.
+```powershell
+.\.venv\Scripts\python.exe -m mkdocs build --strict
+```
+
+Pages live in `docs/`, navigation in `mkdocs.yml`, and example media in `docs/assets/`. The generated `site/` directory is not versioned. GitHub Actions publishes pushes to `main` or `master` only after the strict build succeeds.
+
+Reading or building the guide requires no audio tools or voice models. To generate signals and time an episode, use the [requirements by task](docs/tecnica/generadores.md#requirements).
+
+The guide is available in **English** and **Español**. Use the language selector in the header to keep the current page and section when switching. English stays at the existing URLs; Spanish lives under `/es/`.
+
+Each page has an English `.md` source and a Spanish `.es.md` counterpart. Both editions use the same section identifiers and example media. Update the pair when changing an explanation; write each example naturally in its language and recalculate any character counts. Original screenshots and videos retain their recorded interface, Japanese audio, and Spanish subtitles. The English captions provide equivalent dialogue and explain what to inspect.

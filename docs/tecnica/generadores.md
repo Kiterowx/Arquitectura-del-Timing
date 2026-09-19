@@ -1,270 +1,87 @@
-# Generadores de señales
+# Generate the analysis files
 
-Una señal es un archivo de texto que responde una pregunta sobre el audio o el video:
-dónde cambia la escena, dónde hay silencio, dónde habla alguien. Esos archivos se
-calculan una vez por episodio, quedan guardados junto al video y los lee después el
-motor de timing dentro del editor. Calcularlos por separado permite mirarlos,
-compararlos y rehacerlos sin tocar el subtítulo.
+[Chrono Generators](https://github.com/Kiterowx/Chrono-Generators-Scripts) prepares measurements for Auto Timing. Video supplies the scene cuts; a vocal WAV supplies the audio measurements. The batch files call the Python scripts in `scripts/`, so keep that folder when copying the tools.
 
-La carpeta [Chrono Generators](https://github.com/Kiterowx/Chrono-Generators-Scripts)
-contiene seis archivos por lotes de producción: `Keyframes
-SCXvid.bat`, `Retimes Silencios.bat`, `Features Espectrales.bat`, `Envelope RMS.bat`,
-`Waveform JSON.bat` y `Procesar Todo.bat`. Son programas de Windows que se ejecutan
-haciendo doble clic o arrastrando los archivos del episodio encima. Incluye además
-`Build VADFlux.bat`, que construye `vadflux.exe`, el ejecutable que produce las señales
-de voz y flux consumidas por `Retimes Silencios.bat` y `Procesar Todo.bat`. La separación
-de la voz se hace aparte, con [UVR](https://github.com/Anjok07/ultimatevocalremovergui),
-una aplicación de escritorio con interfaz gráfica. La
-generación queda fuera de Chrono Suite; Chrono consume las señales dentro de Aegisub.
+The generators do not separate voices. If you still have the full mix, start with [vocal preparation](vocales.md).
 
-`Features Espectrales.bat`, `Waveform JSON.bat`, `Procesar Todo.bat` y `Build VADFlux.bat`
-usan `python`. La lógica Python vive embebida dentro del propio `.bat`: el archivo por
-lotes se lee a sí mismo, extrae el bloque Python correspondiente y lo ejecuta con el
-intérprete instalado. No requieren archivos `.py` junto al generador. `Build VADFlux.bat`
-necesita PyInstaller, torch, torchaudio, librosa, soundfile, numpy y numba para compilar
-el ejecutable.
+## Requirements
 
-## Dos maneras de ejecutar un generador
+| Task | Requirements |
+| --- | --- |
+| Run any batch file | Windows and 64-bit Python 3.10 or later, compatible with the selected packages. |
+| Waveform JSON or RMS envelope | Python and FFmpeg; no additional Python packages. |
+| Spectral features | Python, FFmpeg, and `requirements.txt` (NumPy). |
+| Silence, VAD, and flux | FFmpeg and `requirements-vad.txt`, or `vadflux.exe` beside the batch files. |
+| Keyframes | FFmpeg and the standalone SCXvid console executable. |
+| Generate All | All the generation requirements above. |
+| Package VADFlux | Optional `requirements-build.txt`, including PyInstaller. |
+| Inspect streams and duration | FFprobe, supplied by common FFmpeg distributions. |
 
-Cada generador acepta el trabajo de dos formas, y conviene conocer las dos desde el
-principio.
+Get [FFmpeg](https://ffmpeg.org/download.html) and [SCXvid standalone](https://github.com/soyokaze/SCXvid-standalone/releases) from their project pages. Put `ffmpeg.exe` and `SCXvid.exe` beside the batch files or on PATH. SCXvid must accept YUV4MPEG input and write an XviD log; a VapourSynth plugin is not a substitute for that console program.
 
-La primera es **arrastrar archivos** sobre el icono del generador. Cada archivo soltado
-se procesa por su nombre real, sea cual sea. Sirve para un episodio suelto o para una
-selección manual.
+From the Chrono Generators folder in PowerShell:
 
-La segunda es **ejecutarlo sin arrastrar nada**. El generador pregunta un número de
-inicio y uno de fin, y recorre la numeración del episodio. `Keyframes SCXvid` busca
-el video —`1.mkv`, `02.mkv`—; todos los generadores de señales vocales buscan el WAV
-equivalente —`1.wav`, `02.wav`—. Sirve para procesar una serie entera de una vez.
-
-## La preparación del audio
-
-El flujo de timing trabaja con la pista vocal producida por UVR. `Retimes Silencios.bat` y
-`Features Espectrales.bat` reducen primero el audio entregado al generador a una forma
-estable: una pista mono a 16 kHz, con un filtro que recorta lo que baja de 80 Hz y lo que
-sube de 8 kHz, y una normalización dinámica que iguala tramos suaves y fuertes. `Procesar
-Todo.bat` reutiliza esa misma preparación para sus silencios, VAD, flux y mapa espectral.
-El archivo preparado es temporal y se borra al terminar.
-
-`Waveform JSON.bat` usa otra ruta: decodifica el WAV vocal a mono de 48 kHz y escribe
-picos mínimo y máximo con resolución base de 1 ms. `Envelope RMS.bat` no usa esa
-normalización previa: lee el mismo WAV con FFprobe y escribe la energía RMS cuadro a
-cuadro. El video no entra en ninguna de estas mediciones. En el modo por rango,
-`Procesar Todo.bat` empareja cada video numerado con su WAV vocal.
-
-## Keyframes SCXvid
-
-Un keyframe, aquí, es un fotograma donde la escena cambia de plano. **Keyframes SCXvid**
-recorre el video, lo reduce a una resolución de trabajo y marca esos cambios, dejando un
-`_keyframes.log`. Contra esos cortes se alinean después los inicios y los finales.
-
-Se usa cuando el video llega sin keyframes propios o trae unos que no corresponden a
-cambios de escena. Procesa solo video; un archivo de audio suelto se omite.
-
-## Retimes Silencios
-
-**Retimes Silencios** produce de una sola pasada tres familias que describen el mismo
-audio desde ángulos distintos.
-
-Los **silencios** se miden a tres niveles de exigencia —−30, −40 y −50 dB—, pidiendo al
-menos 30 milisegundos de quietud para contar como pausa. El nivel más sensible marca
-hasta las micropausas entre palabras; el más estricto solo reconoce el silencio profundo.
-Comparar los tres delata la voz baja, la música de fondo y las pausas dudosas. Salen como
-`_Retimes_30.txt`, `_Retimes_40.txt` y `_Retimes_50.txt`.
-
-La **detección de voz** marca las regiones con habla probable, con su inicio y su final.
-Señala dónde mirar y propone candidatos de borde, sin distinguir quién habla ni qué dice.
-Sale como `_Retimes_vad.tsv`.
-
-El **flux** mide cuánto cambia la energía del sonido de un instante al siguiente. Un
-cambio brusco delata un ataque: una consonante, una entrada repentina, el comienzo de una
-palabra. Afina los inicios que la detección de voz redondea. Sale como `_Retimes_flux.tsv`.
-
-## Features Espectrales
-
-**Features Espectrales** describe la presencia de voz por bandas de frecuencia a lo largo
-del tiempo. Donde la detección de voz da un sí o un no, este mapa muestra cuánta energía
-hay y en qué región del espectro, lo que separa un susurro real de un resto de música.
-Sale como `_Retimes_spectrum.tsv`.
-
-Es una señal de consulta para los tramos ambiguos. El motor de timing trabaja con las
-otras familias; este mapa sirve para resolver a ojo las escenas de voz muy baja, mucha
-música o capas superpuestas.
-
-## Envelope RMS
-
-**Envelope RMS** resume, cuadro a cuadro, la potencia del audio. Leído sobre una pista
-vocal limpia, dibuja la silueta de cada frase: dónde sube el ataque, dónde se sostiene el
-cuerpo y dónde decae la cola. Es la señal que mejor separa una respiración final de una
-sílaba que todavía pertenece a la palabra, y la que más ayuda a decidir el lead-out.
-
-En modo de rango numérico usa el WAV con el número del episodio —`01.wav`—. También
-reconoce nombres anteriores como `01_vocals.wav`, `01_Vocals.wav` o `vocals_01.wav`
-como respaldo. Al arrastrar un archivo, exige un WAV. Sale como `_envelope.tsv`.
-
-## Waveform JSON
-
-**Waveform JSON** convierte el audio en una onda de picos mínimo y máximo, guardada en
-varios niveles de resolución para dibujarse rápido tanto alejada como en detalle. Cumple
-tres funciones: la lee el método de cronometraje simple para encontrar la voz, se dibuja
-para estudiar un caso y la carga el editor web para corregir el pegado en el navegador.
-Sale como `.waveform.json`. Su estructura y su editor se describen en
-[Onda comprimida](web.md).
-
-## Procesar Todo
-
-**Procesar Todo** integra las mismas operaciones en un solo archivo por lotes. Empareja
-`01.mkv` con `01.wav`: el video pasa únicamente a SCXvid para extraer keyframes y el WAV
-vocal pasa a silencios, VAD, flux, espectro, onda comprimida y envelope. Si falta cualquiera
-de los dos, el episodio no se procesa como flujo completo.
-
-Tras esa pasada sobre `01.mkv` con su `01.wav`, la carpeta contiene el material más
-estas señales:
-
-```text
-01_keyframes.log         cambios de escena
-01_Retimes_30.txt        silencios a -30 dB
-01_Retimes_40.txt        silencios a -40 dB
-01_Retimes_50.txt        silencios a -50 dB
-01_Retimes_vad.tsv       regiones de voz
-01_Retimes_flux.tsv      ataques de flux
-01_Retimes_spectrum.tsv  mapa espectral de consulta
-01_envelope.tsv          energía RMS de la voz
-01.waveform.json         onda comprimida
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements-vad.txt
 ```
 
-Cada nombre lleva el número del episodio, así que una carpeta con varios episodios
-mantiene sus señales separadas. Quién las consume está en [Motor de timing](motor.md); cómo
-se leen y se cruzan, en las secciones que siguen.
+For spectral features alone, install `requirements.txt` instead. Waveform and RMS generation need no extra packages. The batch files prefer `.venv` when it exists.
 
-## Leer las señales
+The VAD requirements include NumPy, PyTorch, torchaudio, librosa, SoundFile, and Numba. VADFlux runs on CPU and downloads Silero VAD through PyTorch Hub on first use, then reuses the cache. Installation and the first model download need internet access.
 
-Cada señal aporta una parte del audio y tiene un límite propio; la decisión nace de
-cruzarlas. Entender qué aporta cada familia y cuál es su alcance evita confiar en una
-pista aislada y colocar un borde donde la evidencia parecía clara.
+After installing `requirements-build.txt`, **Build VADFlux.bat** can package `scripts/vadflux.py`. The generators prefer that EXE when present and otherwise run the Python script. The EXE does not bundle the Silero model.
 
-<div class="tg-signal">
-<div class="s">
-<p class="name">Silencios <code>_30/40/50.txt</code></p>
-<dl>
-<dt class="yes">Responde</dt><dd>¿Hay sonido aquí, sí o no?, a tres niveles de exigencia.</dd>
-<dt class="no">Límite</dt><dd><i>Qué</i> suena: un golpe de música cuenta igual que una palabra.</dd>
-</dl>
-</div>
-<div class="s">
-<p class="name">Detección de voz <code>_vad.tsv</code></p>
-<dl>
-<dt class="yes">Responde</dt><dd>Dónde habla alguien, con principio y fin de región.</dd>
-<dt class="no">Límite</dt><dd>Quién habla; suaviza los extremos y mezcla voces superpuestas.</dd>
-</dl>
-</div>
-<div class="s">
-<p class="name">Flux espectral <code>_flux.tsv</code></p>
-<dl>
-<dt class="yes">Responde</dt><dd>El instante exacto en que el sonido cambia: el filo de una consonante.</dd>
-<dt class="no">Límite</dt><dd>Si el cambio es voz; un golpe o una puerta también lo excitan.</dd>
-</dl>
-</div>
-<div class="s">
-<p class="name">Mapa espectral <code>_spectrum.tsv</code></p>
-<dl>
-<dt class="yes">Responde</dt><dd>Cuánta energía hay y en qué bandas: la textura del tramo.</dd>
-<dt class="no">Límite</dt><dd>Aporta desempate sobre bordes que otras señales discuten.</dd>
-</dl>
-</div>
-<div class="s">
-<p class="name">Envelope <code>_envelope.tsv</code></p>
-<dl>
-<dt class="yes">Responde</dt><dd>La silueta de energía: ataque, cuerpo y cola de la frase.</dd>
-<dt class="no">Límite</dt><dd>Si algo es voz; mide potencia y calla sobre el contenido.</dd>
-</dl>
-</div>
-<div class="s">
-<p class="name">Onda comprimida <code>.waveform.json</code></p>
-<dl>
-<dt class="yes">Responde</dt><dd>La forma cruda del audio, sin interpretación, para ver con los propios ojos.</dd>
-<dt class="no">Límite</dt><dd>Funciona como material de consulta junto a otras señales.</dd>
-</dl>
-</div>
-</div>
+## Inputs and outputs
 
-## Por qué separar la voz
+| Batch file | Input | Output | Used by |
+| --- | --- | --- | --- |
+| SCXvid Keyframes | `01.mkv` | `01_keyframes.log` | External keyframes in Aegisub. |
+| Waveform JSON | `01.wav` | `01.waveform.json` | Lazy, optional Busy waveform, ChronoSplit, SubWave. |
+| Silence Retimes | `01.wav` | `01_Retimes_30.txt`, `_40.txt`, `_50.txt`, `_vad.tsv`, `_flux.tsv` | Busy; Legacy uses the silence logs. |
+| RMS Envelope | `01.wav` | `01_envelope.tsv` | Busy's envelope input. |
+| Spectral Features | `01.wav` | `01_Retimes_spectrum.tsv` | Reference data for manual inspection. |
+| Generate All | `01.mkv` or `01.wav`, with its partner available | All nine files above. | Combined preparation. |
 
-La mezcla final de una obra combina diálogo, música, efectos y masterización en una
-sola pista. Para el oído narrativo eso es perfecto; para medir bordes es ruido.
-Una pista vocal separada despeja el campo: los silencios dejan de confundir un
-acorde sostenido con habla, la detección de voz deja de morder la música con voz
-de fondo, los ataques dejan de dispararse con la percusión, y el envelope dibuja la
-frase sin la energía ajena que la rodea.
+Drag files onto a batch file or call it from the console. With no arguments it asks for **Start** and **End** and searches the console's current folder. It accepts unpadded and two-digit episode numbers, as well as three-digit episodes. Names are preserved: `1.wav` produces `1.waveform.json`; `01.wav` produces `01.waveform.json`. Avoid keeping both variants of one episode number in the same folder.
 
-La separación se hace con [UVR](https://github.com/Anjok07/ultimatevocalremovergui),
-una aplicación de escritorio, y produce un `WAV`. El contrato normal lo nombra con el
-número del episodio —`01.wav`— para emparejarlo con `01.mkv`. Sobre esa pista limpia se
-calculan todas las señales de audio.
-La mezcla completa queda como respaldo técnico fuera del flujo normal, con revisión
-posterior más estricta.
+The exact aliases `01_vocals.wav` and `vocals_01.wav` produce outputs with base name `01`. Generate All requires the video and WAV to share that base; partial filename matches are not used.
 
-![La interfaz de UVR, donde la voz se separa de la música en una pista propia](../assets/ejemplos/uvr-gui.png){ loading=lazy }
+Outputs go beside the media and replace same-named files after processing succeeds. When a processing tool fails, older outputs remain. Read the final status so you do not mistake an old file for a newly generated one.
 
-## Leer cruzando
+## What the files measure
 
-La fuerza de una decisión crece cuando varias familias señalan el mismo punto.
-Cuando la detección de voz arranca una región y el flux marca un ataque dentro de
-los primeros milisegundos de esa región, el inicio es firme: hay habla y hay un
-filo concreto donde empieza. Cuando el envelope conserva energía después de que la
-detección de voz haya soltado la región, conviene mirar si esa cola es parte de la
-palabra —y va dentro de la línea— o una respiración —y se queda fuera—.
+### Keyframes
 
-<figure class="tg-fig tg-strip tg-signalmap">
-<span class="tg-eyebrow">Cinco señales sobre el mismo eje de tiempo</span>
-<div class="lanes">
-<div class="lane"><span class="lab">onda</span><span class="seg fade" style="left:20%;width:50%"></span></div>
-<div class="lane"><span class="lab">vad</span><span class="seg voz" style="left:20%;width:48%"></span></div>
-<div class="lane"><span class="lab">flux</span><i class="pin" style="left:20%"></i><i class="pin" style="left:35%"></i><i class="pin" style="left:52%"></i><i class="pin" style="left:80%"></i></div>
-<div class="lane"><span class="lab">envelope</span><span class="seg fade" style="left:20%;width:54%"></span></div>
-<div class="lane"><span class="lab">silencios</span><span class="seg aire" style="left:0;width:19%"></span><span class="seg aire" style="left:76%;width:24%"></span></div>
-<span class="colmark ok" style="left:20%"></span>
-<span class="colmark bad" style="left:80%"></span>
-</div>
-<div class="scale"><span class="ok" style="left:20%">inicio firme</span><span class="e" style="left:80%">golpe sin voz</span></div>
-<span class="cap">Donde las familias coinciden —la región de voz arranca, el flux marca su filo, el silencio termina—, el borde es firme. El pico de flux aislado de la derecha cae sin región de voz alrededor: un golpe o un corte de música, sin borde que proponer.</span>
-</figure>
+SCXvid analyzes frames and writes an XviD log of candidate shot changes. Load it as external keyframes in Aegisub, then check the picture: the detector can miss cuts or flag flashes. Use the video's timecodes when mapping frames to times in variable frame rate material.
 
-Las contradicciones son igual de informativas. Un pico de flux sin región de voz
-alrededor suele delatar un golpe o un corte de música. Un envelope
-que sube sin que la detección de voz lo acompañe apunta a música residual o a una
-voz que el detector pasó por alto; el mapa espectral suele desempatar. Un tramo que
-el oído oye como voz pero que el umbral más estricto marca como silencio avisa de
-que ese umbral no sirve para esa escena, y conviene leer los silencios del umbral
-sensible.
+### Silence logs
 
-Cuando la detección de voz empieza claramente antes que el borde de la línea, el
-inicio entró tarde y descubre la primera sílaba. Cuando termina después del borde,
-el final corta voz. Y cuando un keyframe cae cerca mientras la voz todavía
-continúa, la decisión deja de ser de audio y pasa a ser de escena: cubrir la voz o
-ceder al corte es ya un juicio de sentido que las señales solo acompañan.
+FFmpeg prepares temporary mono 16 kHz audio, with an 80 Hz high-pass filter, an 8 kHz low-pass filter, and dynamic normalization. `silencedetect` then measures pauses of at least 30 ms at −30, −40, and −50 dB.
 
-## La prioridad cambia según el borde
+A quiet sound may count as silence at −30 dB while remaining above the −50 dB threshold. Compare the logs around whispers. They contain `silence_start` and `silence_end` times in seconds. Because the audio has been normalized, the thresholds do not describe the level of the original mix.
 
-El peso de cada evidencia cambia según el borde que se decide. En el **inicio**
-manda la voz: el texto debe estar listo cuando la primera sílaba suena, y la
-referencia es el ataque vocal, con la escena como matiz cercano. En el **final**
-mandan la lectura, la escena y la continuidad: la voz ya cerró, y lo que queda por
-resolver es dar tiempo a leer, respetar un corte cercano y no parpadear contra la
-línea siguiente.
+### VAD and flux
 
-<div class="tg-cols">
-<div class="c inicio">
-<h4>En el inicio manda la voz</h4>
-<p>El texto debe estar listo cuando la primera sílaba suena. La referencia es el ataque vocal, con la escena como matiz cercano.</p>
-</div>
-<div class="c final">
-<h4>En el final mandan lectura, escena y continuidad</h4>
-<p>La voz ya cerró. Queda dar tiempo a leer, respetar un corte cercano y no parpadear contra la línea siguiente.</p>
-</div>
-</div>
+Silero estimates speech regions, exported as `start_ms` and `end_ms`. VADFlux uses a 0.4 threshold, an 80 ms minimum speech duration, and 30 ms pauses. It identifies neither words nor speakers.
 
-Esta asimetría es la que convierte un montón de señales en un método. El criterio está
-en saber, en cada lado de la línea, cuál pregunta manda, y usar las demás señales para
-confirmarla o ponerla en duda.
+librosa detects peaks in an onset envelope. The flux TSV contains `time_ms`, `type`, and `score`; this generator writes **onset** events. Speech endings require other evidence. Musical attacks can also create peaks. The analysis hop is 10 ms, and a detected peak is an estimate rather than an exact consonant boundary.
+
+### Spectral features
+
+This uses the same prepared audio, 32 ms windows, and 10 ms hops. It measures band energy, RMS, peak level, zero crossings, centroid, flatness, and flux. `speech_p` combines these features in a heuristic score whose values have no calibration as speech probabilities. It is useful for inspecting uncertain passages; Auto Timing has no field for this TSV.
+
+### RMS envelope
+
+FFmpeg measures RMS per decoded audio block from the vocal WAV, without the normalization above. Block duration depends on decoding and is unrelated to the video's frames. Despite the `.tsv` extension, this legacy format has two **comma-separated** columns with no header: seconds and RMS dB. Digital silence can appear as `-inf`.
+
+### Waveform JSON
+
+The WAV is decoded to mono, 48 kHz, 16-bit audio. Each base point stores the minimum and maximum of 48 samples, or 1 ms. Higher levels combine points for different zoom scales. The JSON contains no playable audio or recognized words. See the [format and editor notes](web.md).
+
+## Compare evidence against the audio
+
+A VAD region near a flux onset and an RMS rise is a useful place to inspect. Agreement does not prove that the sound belongs to the cue's speaker: all these measurements come from the same recording and may share errors.
+
+If RMS continues past VAD, listen for a remaining syllable, reverberation, or a breath. The dialogue represented by the subtitle decides the boundary. Continue with [Auto Timing](motor.md) to load the files.
