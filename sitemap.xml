@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/referencias/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/referencias/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/referencias/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/algoritmos/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/algoritmos/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/algoritmos/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/casos-avanzados/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/casos-avanzados/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/casos-avanzados/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/casos/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/casos/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/casos/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/criterios/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/criterios/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/criterios/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/filosofia/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/filosofia/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/filosofia/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/glosario/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/glosario/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/glosario/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/post-timing/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/post-timing/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/post-timing/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/raw-timing/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/raw-timing/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/raw-timing/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/segmentacion/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/segmentacion/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/segmentacion/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/teoria/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/teoria/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/teoria/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/auditoria/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/auditoria/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/auditoria/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/division-lineas/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/division-lineas/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/division-lineas/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/flujo/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/flujo/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/flujo/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/generadores/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/generadores/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/generadores/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/motor/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/motor/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/motor/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/postprocesado/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/postprocesado/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/postprocesado/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/vocales/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/vocales/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/vocales/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/web/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/web/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/web/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/referencias/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/referencias/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/referencias/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/algoritmos/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/algoritmos/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/algoritmos/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/casos-avanzados/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/casos-avanzados/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/casos-avanzados/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/casos/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/casos/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/casos/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/criterios/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/criterios/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/criterios/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/filosofia/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/filosofia/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/filosofia/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/glosario/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/glosario/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/glosario/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/post-timing/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/post-timing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/post-timing/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/raw-timing/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/raw-timing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/raw-timing/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/segmentacion/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/segmentacion/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/segmentacion/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/teoria/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/teoria/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/fundamentos/teoria/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/auditoria/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/auditoria/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/auditoria/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/division-lineas/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/division-lineas/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/division-lineas/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/flujo/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/flujo/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/flujo/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/generadores/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/generadores/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/generadores/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/motor/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/motor/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/motor/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/postprocesado/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/postprocesado/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/postprocesado/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/vocales/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/vocales/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/vocales/"/>
+    </url>
+    <url>
+        <loc>https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/web/</loc>
+        <lastmod>2026-09-19</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="es" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/tecnica/web/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kiterowx.github.io/Arquitectura-del-Timing/tecnica/web/"/>
+    </url>
+</urlset>

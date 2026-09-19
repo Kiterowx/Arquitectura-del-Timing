@@ -1,0 +1,1596 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Guía para ajustar voz, lectura, cortes de escena y continuidad con Aegisub y Chrono Suite.">
+      
+      
+        <meta name="author" content="Kite">
+      
+      
+        <link rel="canonical" href="https://kiterowx.github.io/Arquitectura-del-Timing/es/fundamentos/casos-avanzados/">
+      
+      
+        <link rel="prev" href="../casos/">
+      
+      
+        <link rel="next" href="../criterios/">
+      
+      
+        
+          <link rel="alternate" href="../../../fundamentos/casos-avanzados/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="es">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Casos avanzados - Guía de timing de subtítulos</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+3:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Source Sans 3";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#timing-exceptions" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../" title="Guía de timing de subtítulos" class="md-header__button md-logo" aria-label="Guía de timing de subtítulos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a7 7 0 0 1-7-7 7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7m7.03-12.61 1.42-1.42c-.45-.51-.9-.97-1.41-1.41L17.62 6c-1.55-1.26-3.5-2-5.62-2a9 9 0 0 0-9 9 9 9 0 0 0 9 9c5 0 9-4.03 9-9 0-2.12-.74-4.07-1.97-5.61M11 14h2V8h-2m4-7H9v2h6z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Guía de timing de subtítulos
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Casos avanzados
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Seleccionar idioma">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../fundamentos/casos-avanzados/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Fundamentos
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tecnica/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Herramientas y flujo de trabajo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../algoritmos/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Algoritmos
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../referencias/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Referencias
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Guía de timing de subtítulos" class="md-nav__button md-logo" aria-label="Guía de timing de subtítulos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a7 7 0 0 1-7-7 7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7m7.03-12.61 1.42-1.42c-.45-.51-.9-.97-1.41-1.41L17.62 6c-1.55-1.26-3.5-2-5.62-2a9 9 0 0 0-9 9 9 9 0 0 0 9 9c5 0 9-4.03 9-9 0-2.12-.74-4.07-1.97-5.61M11 14h2V8h-2m4-7H9v2h6z"/></svg>
+
+    </a>
+    Guía de timing de subtítulos
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Fundamentos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../teoria/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio y final del subtítulo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../segmentacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentar el diálogo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../raw-timing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Timing bruto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filosofia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resolver prioridades
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../post-timing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Márgenes, snap y cadenas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../casos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisiones en la práctica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Casos avanzados
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Casos avanzados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fades-and-transitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Desvanecimientos y transiciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#brief-reactions-and-vocal-sounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reacciones breves y vocalizaciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reveal-the-sentence-as-the-scene-unfolds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Revelar la frase al ritmo de la escena
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#match-the-phrasing-to-the-spoken-rhythm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repartir el texto según el ritmo hablado
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simultaneous-voices-and-fading-tails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voces simultáneas y colas sostenidas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-cue-that-stays-too-long" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permanencia excesiva
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../criterios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Velocidad de lectura y límites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glosario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glosario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../tecnica/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Herramientas y flujo de trabajo
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Herramientas y flujo de trabajo
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/flujo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Un episodio de principio a fin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/division-lineas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dividir, renglonar y unir
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/vocales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preparar las vocales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/generadores/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generar archivos de análisis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/motor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auto Timing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/postprocesado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Herramientas de post-timing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Waveform JSON y SubWave
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/auditoria/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auditar el timing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../algoritmos/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Algoritmos
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Algoritmos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referencias
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fades-and-transitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Desvanecimientos y transiciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#brief-reactions-and-vocal-sounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reacciones breves y vocalizaciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reveal-the-sentence-as-the-scene-unfolds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Revelar la frase al ritmo de la escena
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#match-the-phrasing-to-the-spoken-rhythm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repartir el texto según el ritmo hablado
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simultaneous-voices-and-fading-tails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Voces simultáneas y colas sostenidas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-cue-that-stays-too-long" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permanencia excesiva
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="timing-exceptions">Casos avanzados<a class="headerlink" href="#timing-exceptions" title="Permanent link">&para;</a></h1>
+<p>Algunas escenas piden más permanencia, una salida compartida o una división dentro de una oración incompleta. El ajuste depende de lo que el espectador necesita oír, leer y descubrir en ese momento.</p>
+<h2 id="fades-and-transitions">Desvanecimientos y transiciones<a class="headerlink" href="#fades-and-transitions" title="Permanent link">&para;</a></h2>
+<p>Un subtítulo con desvanecimiento necesita tiempo para el efecto y para la lectura. En el clip bajo el agua, «Cuando cierro los ojos...» desaparece gradualmente mientras continúa el plano. El tiempo extra permite leer la frase antes de perder demasiada opacidad. Contar toda la duración del evento como tiempo de lectura útil daría una impresión engañosa de su permanencia.</p>
+<p>Revisa el efecto en reproducción y ajusta el margen que deja el siguiente subtítulo. En ASS también hay que comprobar cuánto dura el desvanecimiento: alargar el evento y alargar el efecto no dejan la misma cantidad de tiempo con el texto plenamente visible.</p>
+<figure class="tg-fig">
+<span class="tg-eyebrow">Tiempo para leer y desvanecer</span>
+<video src="../../../assets/ejemplos/desvanecimiento-largo.mp4" controls loop playsinline preload="metadata"></video>
+<figcaption>«Cuando cierro los ojos...» se desvanece mientras el plano bajo el agua continúa. Revisa cuánto tiempo sigue siendo legible durante la salida.</figcaption>
+</figure>
+
+<p>Una transición por negro puede separar dos momentos de la acción. En el siguiente clip se acumulan las llamadas «¡Rápido!» antes del negro; después aparece «¡Rápido, vamos!». Dejar ese intervalo sin texto conserva la pausa visual de la escena.</p>
+<figure class="tg-fig">
+<span class="tg-eyebrow">Conservar la pausa visual</span>
+<video src="../../../assets/ejemplos/transicion-cinematografica.mp4" controls loop playsinline preload="metadata"></video>
+<figcaption>Las llamadas se repiten antes del negro. El siguiente subtítulo entra cuando vuelve la imagen.</figcaption>
+</figure>
+
+<h2 id="brief-reactions-and-vocal-sounds">Reacciones breves y vocalizaciones<a class="headerlink" href="#brief-reactions-and-vocal-sounds" title="Permanent link">&para;</a></h2>
+<p>Dos expresiones rápidas del mismo hablante pueden leerse mejor juntas. Aquí, «¡Jamás! ¡No lo aceptaré!» forma un rechazo enfático. Separar la primera exclamación añadiría un cambio breve de texto dentro del mismo arrebato. Conviene separarlas cuando cambia el hablante, la intención o una pausa da a cada reacción su propio momento.</p>
+<figure class="tg-fig">
+<span class="tg-eyebrow">Dos expresiones de un mismo rechazo</span>
+<video src="../../../assets/ejemplos/expresiones-breves.mp4" controls loop playsinline preload="metadata"></video>
+<figcaption>«¡Jamás! ¡No lo aceptaré!» permanece en un solo evento durante la reacción.</figcaption>
+</figure>
+
+<p>Las risas, los jadeos y las interjecciones se valoran según su función. Un «ah» hablado puede tener evento propio si marca una reacción antes de la siguiente frase. Una risa omitida en una traducción de diálogo no necesita alargar ese subtítulo. Si el subtítulo describe un sonido, su tiempo acompaña esa reacción audible. Una risa también puede cambiar cómo se entienden las palabras siguientes; conviene escuchar el intercambio completo antes de fijar el borde.</p>
+<h2 id="reveal-the-sentence-as-the-scene-unfolds">Revelar la frase al ritmo de la escena<a class="headerlink" href="#reveal-the-sentence-as-the-scene-unfolds" title="Permanent link">&para;</a></h2>
+<p>En el clip del salón, «En caso contrario,» introduce una amenaza. El primer plano muestra los pies de la hablante; después, la cámara la presenta mientras identifica la velada y a su anfitrión. La acusación sobre lo ocurrido en el jardín real llega más tarde. Mostrar toda la amenaza desde la primera palabra permitiría descubrirla antes de que la actuación la desarrolle.</p>
+<p>La condición inicial aparece sola y da paso al siguiente tramo con el cambio de plano. La división posterior reserva la acusación para su turno en el habla. «En caso contrario,» depende de lo que sigue, pero cumple una función narrativa clara: hace esperar la consecuencia.</p>
+<figure class="tg-fig">
+<span class="tg-eyebrow">Reservar la consecuencia</span>
+<video src="../../../assets/ejemplos/vocalizaciones-interjecciones.mp4" controls loop playsinline preload="metadata"></video>
+<figcaption>La información avanza por etapas: condición → velada y anfitrión → acusación. La primera división evita adelantar la amenaza antes del cambio de plano.</figcaption>
+</figure>
+
+<table>
+<thead>
+<tr>
+<th>Momento</th>
+<th>Subtítulo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Condición</td>
+<td>En caso contrario,</td>
+</tr>
+<tr>
+<td>Velada y anfitrión</td>
+<td>diré que en esta velada organizada por Dominique Harmsworth en este Grand Merillian,</td>
+</tr>
+<tr>
+<td>Acusación</td>
+<td>hombres y mujeres se mezclaron en el jardín real para cometer actos indecorosos.</td>
+</tr>
+</tbody>
+</table>
+<p>El evento central reúne los datos de la velada y de su anfitrión. Necesita tiempo suficiente para leerse antes de que llegue la acusación. Cualquier reducción o división adicional debe conservar ese orden de la información.</p>
+<h2 id="match-the-phrasing-to-the-spoken-rhythm">Repartir el texto según el ritmo hablado<a class="headerlink" href="#match-the-phrasing-to-the-spoken-rhythm" title="Permanent link">&para;</a></h2>
+<p>Una traducción muy compacta puede cerrar en pantalla una idea que la voz todavía está desarrollando. Repartir o reformular el texto permite acompañar esos tramos hablados, conservando el sentido, el registro y el orden de la información. Igualar el número de sílabas del original no asegura que la traducción mantenga su ritmo.</p>
+<p>En este clip, la primera chica comienza una respuesta con el teléfono en la mano. «¡Espera!» interrumpe la acción. «No me recomiendes.» expresa después la objeción, y la otra chica pregunta «¿Y eso?». Si se mostrara la objeción junto con «¡Espera!», desaparecería ese intervalo de incertidumbre.</p>
+<figure class="tg-fig">
+<span class="tg-eyebrow">La interrupción precede a su explicación</span>
+<video src="../../../assets/ejemplos/tempo-textual.mp4" controls loop playsinline preload="metadata"></video>
+<figcaption>«Ah, bueno, ahora mismo...» → «¡Espera!» → «No me recomiendes.» → «¿Y eso?». Los cambios de texto siguen los turnos de la conversación.</figcaption>
+</figure>
+
+<p><img alt="Onda de audio de la conversación" loading="lazy" src="../../../assets/ejemplos/tempo-textual.svg" /></p>
+<p>Un conector cercano a un corte puede cumplir una función parecida. Si «Pero...» marca una vacilación propia, puede aparecer antes del corte y dejar la continuación para después. Estos tiempos son ilustrativos:</p>
+<div class="tg-cue"><span class="tc">0:04:11.90 <span class="arrow">→</span> 0:04:12.30</span><span class="line">Pero…</span><span class="meta"><span class="tag warn">400 ms: revisar</span><span class="tag">vacilación propia</span></span></div>
+<div class="tg-cue"><span class="tc">0:04:12.30 <span class="arrow">→</span> 0:04:14.10</span><span class="line">ya era demasiado tarde.</span><span class="meta"><span class="tag">entra tras el corte</span></span></div>
+
+<p>Con 400 ms, incluso «Pero…» puede desaparecer antes de que la mirada se asiente. La división ayuda si la vacilación tiene un momento propio y ambos eventos se leen con comodidad; de lo contrario, conviene mantener «Pero ya era demasiado tarde.» unido aunque cruce el corte. Los puntos suspensivos representan la vacilación de la voz. El cambio de plano, por sí solo, no da motivo para añadirlos.</p>
+<h2 id="simultaneous-voices-and-fading-tails">Voces simultáneas y colas sostenidas<a class="headerlink" href="#simultaneous-voices-and-fading-tails" title="Permanent link">&para;</a></h2>
+<p>Dos voces simultáneas pueden conservar inicios y finales independientes. Una salida compartida ayuda cuando despeja el grupo para la siguiente frase o coincide con un corte que ambas deberían respetar. Cada intervención se ajusta hasta donde lo permitan sus palabras y su lectura.</p>
+<p>En el primer clip, la queja aparece antes que «¡Ayase, rápido!». Ambas desaparecen juntas para dejar paso a la respuesta larga mientras continúa el plano de los tejados. Aquí, el cierre común ordena el cambio de subtítulos dentro de la toma. Si un intercambio parecido termina en un corte de escena, ese corte puede servir de extremo compartido.</p>
+<figure class="tg-fig">
+<span class="tg-eyebrow">Entradas distintas, salida compartida</span>
+<video src="../../../assets/ejemplos/bordes-compartidos-voces-simultaneas.mp4" controls loop playsinline preload="metadata"></video>
+<figcaption>«¡¿Qué forma de hablarme es esa?!» y «¡Ayase, rápido!» entran en momentos distintos y dejan paso juntas a la siguiente respuesta.</figcaption>
+</figure>
+
+<p>Una vocal sostenida puede prolongarse, perdiendo energía, más allá de un corte fuerte cuando la palabra ya se entiende. El subtítulo puede cerrarse sobre ese corte si conservar toda la caída distraería del plano siguiente. Una nueva sílaba, palabra o intención necesita seguir cubierta.</p>
+<figure class="tg-fig">
+<span class="tg-eyebrow">Un grito sostenido ante otro plano</span>
+<video src="../../../assets/ejemplos/cola-vocal-corte-dominante.mp4" controls loop playsinline preload="metadata"></video>
+<figcaption>«¡Maldita sea!» sale con el corte al cielo nocturno. Revisa qué sonido queda en ese extremo antes de aplicar el mismo cierre a otro grito.</figcaption>
+</figure>
+
+<h2 id="a-cue-that-stays-too-long">Permanencia excesiva<a class="headerlink" href="#a-cue-that-stays-too-long" title="Permanent link">&para;</a></h2>
+<p>Un evento puede superar el umbral de revisión de la guía si la intervención necesita ese tiempo y se lee bien como una unidad. Primero hay que localizar de dónde sale la permanencia excesiva. Si sobra lead-out, se recorta; si la voz sigue desarrollando una oración larga, puede convenir una división entre cláusulas. Abreviar ayuda cuando la traducción resulta densa, pero no resuelve un texto que permanece mucho después de haber cumplido su función.</p>
+<p>En un timing heredado, conviene comparar varios intervalos de voz claros antes de estimar sus márgenes habituales. El apartado de <a href="../../algoritmos/#estimating-padding-in-an-existing-timing-pass">algoritmos</a> explica cómo usar la mediana y la dispersión para distinguir una decisión recurrente de una excepción.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pie" >
+        
+          
+          <a href="../casos/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Decisiones en la práctica">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                Decisiones en la práctica
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../criterios/" class="md-footer__link md-footer__link--next" aria-label="Siguiente: Velocidad de lectura y límites">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Siguiente
+              </span>
+              <div class="md-ellipsis">
+                Velocidad de lectura y límites
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.indexes", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.tooltips"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../javascripts/video-controls.js"></script>
+      
+        <script src="../../../javascripts/external-links.js"></script>
+      
+        <script src="../../../javascripts/reading-speed.js"></script>
+      
+        <script src="../../../javascripts/language-switch.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1573 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A practical guide to speech boundaries, reading time, scene cuts, and subtitle timing with Aegisub and Chrono Suite.">
+      
+      
+        <meta name="author" content="Kite">
+      
+      
+        <link rel="canonical" href="https://kiterowx.github.io/Arquitectura-del-Timing/algoritmos/">
+      
+      
+        <link rel="prev" href="../tecnica/auditoria/">
+      
+      
+        <link rel="next" href="../referencias/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../es/algoritmos/" hreflang="es">
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>How the automation works - The subtitle timing guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+3:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Source Sans 3";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-the-automation-works" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="The subtitle timing guide" class="md-header__button md-logo" aria-label="The subtitle timing guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a7 7 0 0 1-7-7 7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7m7.03-12.61 1.42-1.42c-.45-.51-.9-.97-1.41-1.41L17.62 6c-1.55-1.26-3.5-2-5.62-2a9 9 0 0 0-9 9 9 9 0 0 0 9 9c5 0 9-4.03 9-9 0-2.12-.74-4.07-1.97-5.61M11 14h2V8h-2m4-7H9v2h6z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The subtitle timing guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How the automation works
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../es/algoritmos/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../fundamentos/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Fundamentals
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tecnica/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tools and workflow
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Algorithm notes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../referencias/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  References
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="The subtitle timing guide" class="md-nav__button md-logo" aria-label="The subtitle timing guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a7 7 0 0 1-7-7 7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7m7.03-12.61 1.42-1.42c-.45-.51-.9-.97-1.41-1.41L17.62 6c-1.55-1.26-3.5-2-5.62-2a9 9 0 0 0-9 9 9 9 0 0 0 9 9c5 0 9-4.03 9-9 0-2.12-.74-4.07-1.97-5.61M11 14h2V8h-2m4-7H9v2h6z"/></svg>
+
+    </a>
+    The subtitle timing guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../fundamentos/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentals
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Fundamentals
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/teoria/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What a timing boundary does
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/segmentacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segment the dialogue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/raw-timing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raw timing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/filosofia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resolve competing priorities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/post-timing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Padding, snapping, and chaining
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/casos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Timing decisions in practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/casos-avanzados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Timing exceptions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/criterios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reading speed and limits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos/glosario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../tecnica/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools and workflow
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools and workflow
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tecnica/flujo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The episode workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tecnica/division-lineas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Split, rebreak, and join
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tecnica/vocales/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prepare the vocal track
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tecnica/generadores/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate analysis files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tecnica/motor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auto Timing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tecnica/postprocesado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post-timing tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tecnica/web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Waveform JSON and SubWave
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tecnica/auditoria/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Audit the timing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithm notes
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Algorithm notes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../referencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#start-with-an-approximately-placed-cue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start with an approximately placed cue
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lazy-amplitude-and-a-threshold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lazy: amplitude and a threshold
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busy-a-weighted-interval-vote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Busy: a weighted interval vote
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Busy: a weighted interval vote">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#busy-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From active regions to speech boundaries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#legacy-and-chronos-final-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Legacy and Chrono's final pass
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Legacy and Chrono&#39;s final pass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chronos-final-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chrono's final pass
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estimating-padding-in-an-existing-timing-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimating padding in an existing timing pass
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="how-the-automation-works">How the automation works<a class="headerlink" href="#how-the-automation-works" title="Permanent link">&para;</a></h1>
+<p>These notes describe <a href="https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/Macros/kite.ChronoSuite.lua">Chrono Suite 1.5.3</a> and <a href="https://github.com/Kiterowx/Kite-Aegisub-Scripts/blob/main/Modules/kite/Timing.lua">kite.Timing 1.4.3</a>. Detection estimates where speech occurs; post-timing changes how long the subtitle stays on screen. Their results need separate checks.</p>
+<h2 id="start-with-an-approximately-placed-cue">Start with an approximately placed cue<a class="headerlink" href="#start-with-an-approximately-placed-cue" title="Permanent link">&para;</a></h2>
+<p>The existing start <code>s</code> and end <code>e</code> define where the detector can look. Place the cue over its own dialogue first. A window containing another speaker can produce convincing boundaries for the wrong line.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Search area</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lazy</td>
+<td>The current interval, expanded by <strong>Search ± (ms)</strong>; the default expansion is zero.</td>
+<td>A wider window can recover a missed onset, but can also include another utterance.</td>
+</tr>
+<tr>
+<td>Busy</td>
+<td>The current interval, with the final detected edges clamped to it.</td>
+<td>Increasing Lazy's search setting does not expand Busy's window.</td>
+</tr>
+<tr>
+<td>Legacy</td>
+<td>Depends on the method in its separate dialog.</td>
+<td>Check whether the method can move outward or only trim inward.</td>
+</tr>
+</tbody>
+</table>
+<p>For example, if a cue begins at 1200 ms but its first consonant starts at 1150 ms, Busy cannot recover those missing 50 ms. Move the original start earlier before detecting again. Lazy with 100 ms of extra search could include that consonant, provided it survives the amplitude threshold and cleanup.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>approximately placed cue + analysis files
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    → estimated speech interval
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    → padding, scene snapping, and chaining, if enabled
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    → visible timing and review markers
+</code></pre></div>
+<h2 id="lazy-amplitude-and-a-threshold">Lazy: amplitude and a threshold<a class="headerlink" href="#lazy-amplitude-and-a-threshold" title="Permanent link">&para;</a></h2>
+<p>Lazy reads the first peak level in the waveform JSON and takes the larger absolute value from each min/max pair. A moving average smooths this amplitude envelope over 10 ms by default. The RMS generator measures a different quantity.</p>
+<p>With Otsu enabled, Lazy transforms the smoothed values with <code>log(1 + amplitude)</code>, bounds the histogram with the 1st and 99th percentiles, and uses 96 bins. It chooses the threshold that maximizes separation between two classes:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>θ* = argmaxθ ω0(θ) · ω1(θ) · (μ0(θ) − μ1(θ))²
+</code></pre></div>
+<p>Here <code>ω</code> is the fraction of samples in each class and <code>μ</code> its mean. These are amplitude classes: a loud effect can enter the active class as readily as speech. With Otsu disabled, the current code uses a fixed interpolation between the 5th and 95th percentiles of the smoothed amplitude:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>θ = P5 + 0.12 · (P95 − P5)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>active[n] = smoothed_amplitude[n] ≥ θ
+</code></pre></div>
+<p>The resulting mask is processed in this order:</p>
+<ol>
+<li>Bridge internal gaps up to 60 ms by default.</li>
+<li>Remove remaining active islands shorter than 60 ms by default.</li>
+<li>If edge trimming is enabled, discard eligible small, isolated components near the original cue's edges. This test considers their position, mass, and separation from the main activity.</li>
+<li>Return the first and last edges of the components left in the window. Internal pauses remain inside that interval.</li>
+</ol>
+<p>A wider search can therefore merge two utterances into one result. More aggressive cleanup can remove a quiet consonant or a short reaction. Compare those sounds with the original mix when the vocal stem or threshold makes them disappear.</p>
+<h2 id="busy-a-weighted-interval-vote">Busy: a weighted interval vote<a class="headerlink" href="#busy-a-weighted-interval-vote" title="Permanent link">&para;</a></h2>
+<p>Busy converts each silence log into complementary activity intervals and combines them with VAD regions and, when usable, an envelope. Each source contributes a weight:</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th style="text-align: right;">Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VAD</td>
+<td style="text-align: right;">1.00</td>
+</tr>
+<tr>
+<td>Silence −30 dB</td>
+<td style="text-align: right;">0.90</td>
+</tr>
+<tr>
+<td>Silence −40 dB</td>
+<td style="text-align: right;">0.85</td>
+</tr>
+<tr>
+<td>Silence −50 dB</td>
+<td style="text-align: right;">0.60</td>
+</tr>
+<tr>
+<td>Envelope</td>
+<td style="text-align: right;">1.00</td>
+</tr>
+</tbody>
+</table>
+<p>The initial threshold is half the total participating weight:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vote(t) = Σ_i weight_i · activity_indicator_i(t)
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>active(t) = vote(t) ≥ 0.50 · Σ_i weight_i
+</code></pre></div>
+<p>With all five sources participating, the total is 4.35 and the threshold is 2.175. The three silence sources alone contribute 2.35 when all indicate activity, so they can pass even where VAD is inactive. These measurements come from the same audio and can share residual music or noise. The vote is not a probability of speech.</p>
+<p>The envelope contributes when enough samples and variation are available. Its threshold lies 35% of the way between reference levels near the 10th and 90th percentiles. A loaded waveform JSON replaces the RMS TSV with a smoothed amplitude envelope. The inputs have different units and the code uses their values directly, so switching between them can change the result.</p>
+<h3 id="busy-boundaries">From active regions to speech boundaries<a class="headerlink" href="#busy-boundaries" title="Permanent link">&para;</a></h3>
+<p>Busy filters runs shorter than 50 ms, retaining the original runs if that would remove every candidate. It bridges gaps up to 320 ms, then chooses an anchor using:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>score = overlap_duration + 0.2 · region_duration
+</code></pre></div>
+<p>The candidates have already been clipped to the original cue. Their overlap equals their duration, so this selects the longest merged region. Adjacent regions can join it when their separation is at most 900 ms and each added region lasts at least 120 ms. A long original window can consequently absorb separate phrases.</p>
+<p>The edges are refined using silence boundaries, envelope crossings, and nearby flux events. VADFlux exports <strong>onsets only</strong>: it supplies no flux offsets for the ending. The spectral TSV is not an input to Busy. In a full pass, an ending that reaches the original window limit can also move to a keyframe within the last 150 ms of that window.</p>
+<p>If the first attempt produces no usable interval, Chrono retries with a 0.38 vote fraction, 480 ms bridging, and looser run and pause limits. A weak result alone does not trigger this retry. Reaching the search limit or finding disagreement between boundary sources can produce a weak marker; listen there for clipped speech or the wrong speaker.</p>
+<h2 id="legacy-and-chronos-final-pass">Legacy and Chrono's final pass<a class="headerlink" href="#legacy-and-chronos-final-pass" title="Permanent link">&para;</a></h2>
+<p>Legacy adapts Lazytimer Pocket-sized in a separate dialog:</p>
+<table>
+<thead>
+<tr>
+<th>Legacy method</th>
+<th>How it chooses boundaries</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cluster</td>
+<td>Scores and groups nearby silence boundaries within the search distance, using proximity, silence duration, and source confidence. Loaded VAD and flux can add evidence.</td>
+</tr>
+<tr>
+<td>Table</td>
+<td>Uses the first available silence log in the order −40, −30, −50 dB, builds activity groups, and trims within the original interval.</td>
+</tr>
+<tr>
+<td>LazyFusion</td>
+<td>Combines silence information to choose boundaries within the original interval; loaded flux can refine them.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Silences only</strong> forces LazyFusion and disables auxiliary VAD and flux, regardless of the selected method. Otherwise, Legacy can reuse auxiliary files loaded through <strong>Busy Files...</strong>. Legacy uses neither video keyframes nor the modes below, and leaves <code>[LZ …]</code> markers when marking is enabled.</p>
+<h3 id="chronos-final-pass">Chrono's final pass<a class="headerlink" href="#chronos-final-pass" title="Permanent link">&para;</a></h3>
+<p>Lazy and Busy share these modes:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raw voice</td>
+<td>Writes detected speech boundaries without padding.</td>
+</tr>
+<tr>
+<td>Full + polish</td>
+<td>Detects speech, then applies padding, snapping, and chaining.</td>
+</tr>
+<tr>
+<td>Post current</td>
+<td>Uses the existing edges as speech boundaries and applies the same final pass.</td>
+</tr>
+</tbody>
+</table>
+<p>Full and Post require keyframes loaded in Aegisub. Their base padding is 120 ms before speech and 420 ms after it. Start snapping first looks up to 400 ms before the onset; end snapping first looks up to 800 ms after the ending. <strong>Voice-cut limit</strong>, 100 ms by default, also permits a start after the detected onset or an end before the detected ending. Listen to those inward moves: the algorithm cannot decide whether the removed sound is expendable.</p>
+<p>The planner reconciles neighboring cues, preferring usable shared keyframes and resolving padding overlaps where possible. The 400/800 ms maximum lead-in/out settings guide chaining allowances. Preserving an original cut, handling a short gap, or pursuing the minimum duration can produce margins beyond those settings.</p>
+<p>The 500 ms duration target is attempted afterward, extending the end first when possible. A remaining short cue is flagged. The 28 CPS check also adds a marker; it does not lengthen a cue until a target reading speed is reached.</p>
+<p>Neighbor handling uses the dialogue cues included in the chosen scope and filters. Cues outside that set do not constrain the pass. Review the first and last adjusted cues against untouched neighbors, and inspect overlaps that remain where speech intervals conflict.</p>
+<p><strong>Post current</strong> can add padding again when rerun on already padded times. It also preserves a previous <code>[TM-NOVOICE]</code> result without adjusting that cue. After correcting the initial interval, rerun detection to check it; a post-timing pass cannot recover that speech by itself.</p>
+<h2 id="estimating-padding-in-an-existing-timing-pass">Estimating padding in an existing timing pass<a class="headerlink" href="#estimating-padding-in-an-existing-timing-pass" title="Permanent link">&para;</a></h2>
+<p>This is a manual comparison for choosing settings; Auto Timing does not estimate inherited padding with a median or MAD. Compare several clear cue boundaries <code>(a, b)</code> with measured speech <code>(α, β)</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>δ_in  = α − a
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>δ_out = b − β
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>MAD = median(|δ − median(δ)|)
+</code></pre></div>
+<p>For cues without snapping, overlap, or other exceptions, the median differences suggest the usual margins. MAD describes their spread. Lead-ins of 110, 120, 120, 130, and 400 ms have a median of 120 ms and a MAD of 10 ms. Inspect the 400 ms case: it may reflect a cut or a misplaced start. A small spread in one scene does not establish a pattern for the episode, and a zero MAD does not make every difference an error.</p>
+<p>Compare the proposed settings with a selection checked by hand. Note which first consonants disappear, which unrelated sounds are included, and which pauses become part of a cue. Those differences tell you whether to change a detector setting, move the initial window, or revisit the segmentation.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../tecnica/auditoria/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Audit the timing">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Audit the timing
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../referencias/" class="md-footer__link md-footer__link--next" aria-label="Next: References">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                References
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.indexes", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.tooltips"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../javascripts/video-controls.js"></script>
+      
+        <script src="../javascripts/external-links.js"></script>
+      
+        <script src="../javascripts/reading-speed.js"></script>
+      
+        <script src="../javascripts/language-switch.js"></script>
+      
+    
+  </body>
+</html>
